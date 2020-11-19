@@ -7,14 +7,14 @@ import {PersistGate} from 'redux-persist/integration/react';
 import Welcome from './src/screens/Welcome';
 import StepOne from './src/screens/StepOne';
 import StepTwo from './src/screens/StepTwo';
-import Home from './src/screens/Home';
+import ChatDetail from './src/screens/ChatDetail';
 
 export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <Home />
+          <ChatDetail />
         </PersistGate>
       </Provider>
     );

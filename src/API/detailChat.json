@@ -1,55 +1,75 @@
 {
     "success": true,
-    "message": "listChat",
+    "message": "chat by user 1",
+    "receiver_detail": {
+        "name": "Elon Musk",
+        "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+    },
     "data": [
         {   
             "id": 1,
-            "name": "Timotius Simanjuntak",
-            "message": "Tes",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "sender_message": "P",
+            "receiver_message": "Iya",
             "last_sent": "2020-09-27T00:09:08.000Z"
         },
         {   
             "id": 2,
-            "name": "Timotius Simanjuntak",
-            "message": "Halo apa kabar",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-27T14:14:08.000Z"
+            "sender_message": "bisa minta tolong ga?",
+            "receiver_message": "kenapa emangnya?",
+            "last_sent": "2020-09-27T00:10:08.000Z"
         },
         {   
             "id": 3,
-            "name": "Timotius Simanjuntak",
-            "message": "bagaimana kabar kamu?",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-28T09:18:28.000Z"
+            "sender_message": "Iya nih gw lagi dijalan, tiba2 mobil tesla gw mogok",
+            "receiver_message": "dimana posisi lu?",
+            "last_sent": "2020-09-27T00:11:08.000Z"
         },
         {   
             "id": 4,
-            "name": "Timotius Simanjuntak",
-            "message": "Tes",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-27T00:09:08.000Z"
+            "sender_message": "di amsterdam, bisa ga datang sekarang gw lagi ga bawa duit di amsterdam, bisa ga datang sekarang gw lagi ga bawa duit",
+            "receiver_message": "bisa, yaudah tunggu gw otw",
+            "last_sent": "2020-09-27T00:12:08.000Z"
         },
         {   
             "id": 5,
-            "name": "Timotius Simanjuntak",
-            "message": "Halo apa kabar",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-27T14:14:08.000Z"
+            "sender_message": "oke",
+            "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
         },
         {   
             "id": 6,
-            "name": "Timotius Simanjuntak",
-            "message": "bagaimana kabar kamu?",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-28T09:18:28.000Z"
+            "sender_message": "ya",
+            "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
         },
         {   
             "id": 7,
-            "name": "Timotius Simanjuntak",
-            "message": "bagaimana kabar kamu?",
-            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
-            "last_sent": "2020-09-28T09:18:28.000Z"
+            "sender_message": "mantap",
+            "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
+        },
+        {   
+            "id": 8,
+            "sender_message": "yoi",
+            "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
+        },
+        {   
+            "id": 9,
+            "sender_message": "bye",
+            // "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
+        },
+        {   
+            "id": 10,
+            "sender_message": "bye",
+            // "receiver_message": "sip",
+            "last_sent": "2020-09-27T00:13:08.000Z"
+        },
+        {   
+            "id": 11,
+            "receiver_message": "di amsterdam, bisa ga datang sekarang gw lagi ga bawa duit di amsterdam, bisa ga datang sekarang gw lagi ga bawa duit",
+            "last_sent": "2020-09-27T00:13:08.000Z"
         }
     ]
 }
