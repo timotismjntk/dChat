@@ -13,7 +13,7 @@ import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const StepOne = () => {
+const EnterOldPhone = () => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
 
@@ -76,7 +76,7 @@ const StepOne = () => {
   );
 };
 
-export default StepOne;
+export default EnterOldPhone;
 
 const styles = StyleSheet.create({
   container: {

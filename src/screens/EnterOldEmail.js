@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const StepOne = () => {
+const EnterOldEmail = () => {
   const [email, setEmail] = useState('');
   const [error, SetError] = useState(false);
 
@@ -86,7 +86,7 @@ const StepOne = () => {
   );
 };
 
-export default StepOne;
+export default EnterOldEmail;
 
 const styles = StyleSheet.create({
   container: {

@@ -15,7 +15,7 @@ import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import account from '../assets/account.jpg';
 
-const StepOne = () => {
+const CreateNewAccount = () => {
   const [name, setName] = useState('');
   const [error, SetError] = useState(false);
   const [items, setItems] = useState('');
@@ -132,7 +132,7 @@ const StepOne = () => {
   );
 };
 
-export default StepOne;
+export default CreateNewAccount;
 
 const styles = StyleSheet.create({
   container: {
