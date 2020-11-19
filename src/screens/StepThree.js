@@ -10,18 +10,18 @@ export default function Welcome() {
     <View style={styles.parent}>
       <StatusBar translucent backgroundColor="black" />
       <View style={styles.container}>
-        <Image source={Logo} style={styles.logo} />
-        <Text style={[styles.title, styles.header]}>Selamat Datang!</Text>
-        <Text style={[styles.title, styles.text]}>Coba d•Chat - lancar dan</Text>
-        <Text style={[styles.title, styles.text]}>lebih cepat dari biasanya!</Text>
+          <Text style={styles.header}>Pindahkan Akun?</Text>
+          <Text style={styles.text}>Jika Anda memiliki akun di perangkat {'\n'} lain
+          , akun tersebut dapat dipindahkan{'\n'}ke perangkat ini menggunakan nomor{'\n'}
+          telepon atau alamat email yang{'\n'}terdaftar di akun tersebut.</Text>
       </View>
       <View styles={styles.wrapper}>
         <TouchableOpacity style={styles.btn}>
-          <Text style={styles.btnStart}>Mulai</Text>
+          <Text style={styles.btnText}>Pindahkan Akun Saya</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.alreadyAccount}>
-            Login dengan Alamat Email atau {'\n'}Kode QR
+        <TouchableOpacity style={{marginVertical: 10}}>
+          <Text style={styles.createNew}>
+            Buat Akun baru
           </Text>
         </TouchableOpacity>
       </View>
@@ -34,15 +34,15 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#0ac578',
-        padding: 20,
+        padding: 25,
+        paddingTop: 55,
         paddingBottom: 30,
     },
     container: {
       flex: 1,
       width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
     },
     logo: {
         width: 135,
@@ -50,15 +50,16 @@ const styles = StyleSheet.create({
         height: 135,
     },
     header: {
-      fontSize: 24,
-      fontWeight: 'bold',
+      fontSize: 30,
+      marginBottom: 15,
     },
     title: {
       color: 'white',
       textAlign: 'center',
     },
     text: {
-      color: '#ced7df',
+      color: 'grey',
+      fontSize: 17,
     },
     wrapper: {
       flex: 1,
@@ -66,22 +67,22 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    btnStart: {
-      color: '#0ac578',
+    btnText: {
+      color: 'white',
       fontSize: 16,
     },
     btn: {
       width: 300,
       height: 50,
-      backgroundColor: 'white',
+      backgroundColor: '#0ac578',
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 8,
-      marginBottom: 5,
+      marginBottom: 10,
     },
-    alreadyAccount: {
+    createNew: {
       textAlign: 'center',
-      color: 'white',
-      fontSize: 15,
+      color: 'black',
+      fontSize: 18,
     },
 });
