@@ -76,7 +76,9 @@ const StepOne = () => {
           alignItems: 'flex-end',
           padding: 20,
         }}>
-        <TouchableOpacity style={styles.btn} disabled={error ? true : false}>
+        <TouchableOpacity
+          style={[styles.btn, !error && {backgroundColor: '#0ac578'}]}
+          disabled={error ? true : false}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>

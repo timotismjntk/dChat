@@ -41,7 +41,7 @@ const StepTwo = () => {
             onFocus={() => SetError(true)}
             value={verification}
           />
-          {verification.toString().length <= 6 && error && (
+          {verification.toString().length < 6 && error && (
             <Text style={styles.error}>Verification code is required</Text>
           )}
           <View style={{flexDirection: 'row', marginTop: 5}}>
@@ -63,7 +63,10 @@ const StepTwo = () => {
           padding: 20,
         }}>
         <TouchableOpacity
-          style={styles.btn}
+          style={[
+            styles.btn,
+            verification.toString().length >= 6 && {backgroundColor: '#0ac578'},
+          ]}
           disabled={verification.toString().length >= 6 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>

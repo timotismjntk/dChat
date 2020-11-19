@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import Logo from '../assets/logo.png';
 
-export default function Welcome() {
+export default function StepThree() {
   return (
     <View style={styles.parent}>
       <StatusBar translucent backgroundColor="black" />

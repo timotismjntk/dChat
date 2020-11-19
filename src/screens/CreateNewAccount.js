@@ -38,16 +38,16 @@ const StepOne = () => {
     });
     console.log(image._parts[0][1]);
     if (results.fileSize > 500000) {
-    //   setMessage('image size is too large, atleast < 500 kb');
-    //   setVisible(true);
-    //   setTimeout(() => {
-    //     setVisible(false);
-    //   }, 3000);
+      //   setMessage('image size is too large, atleast < 500 kb');
+      //   setVisible(true);
+      //   setTimeout(() => {
+      //     setVisible(false);
+      //   }, 3000);
     } else {
       setItems(image._parts[0][1].uri);
-    //   dispatch(profileAction.uploadProfileImage(token, image)).catch((err) =>
-        // console.log(err.message),
-    //   );
+      //   dispatch(profileAction.uploadProfileImage(token, image)).catch((err) =>
+      // console.log(err.message),
+      //   );
     }
   };
 
@@ -123,7 +123,7 @@ const StepOne = () => {
           padding: 20,
         }}>
         <TouchableOpacity
-          style={styles.btn}
+          style={[styles.btn, name.length > 0 && {backgroundColor: '#0ac578'}]}
           disabled={name.length > 0 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
@@ -181,6 +181,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     marginTop: 25,
     marginRight: 15,
-    paddingTop: ( Platform.OS === 'ios' ) ? 20 : 0,
+    paddingTop: Platform.OS === 'ios' ? 20 : 0,
   },
 });

@@ -71,7 +71,10 @@ const StepOne = () => {
           padding: 20,
         }}>
         <TouchableOpacity
-          style={styles.btn}
+          style={[
+            styles.btn,
+            phone.toString().length >= 6 && {backgroundColor: '#0ac578'},
+          ]}
           disabled={phone.toString().length >= 6 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
