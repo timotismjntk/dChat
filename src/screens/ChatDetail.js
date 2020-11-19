@@ -5,7 +5,9 @@ import {
   FlatList,
   Modal,
   Text,
+  TextInput,
   View,
+  Keyboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
@@ -43,11 +45,25 @@ const ChatDetail = () => {
   const [showRightNavIconOption, setShowRightNavIconOption] = useState(false);
   const [hideDate, setHideDate] = useState(false);
   const [turnNotifications, setTurnNotifications] = useState(false);
-
+  const [msgInput, setMsgInput] = useState('');
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
   // to hide date after 5 min.
   setTimeout(() => {
     setHideDate(true);
   }, 50000);
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+    };
+  }, []);
+  // to hide the bottomsheet when keyboar show
+  const _keyboardDidShow = () => {
+    setShowBottomSheet(false);
+  };
 
   return (
     <>
@@ -55,15 +71,19 @@ const ChatDetail = () => {
         <Text style={styles.name}>{detailChat.receiver_detail.name}</Text>
         <View style={styles.rightNav}>
           <TouchableOpacity style={styles.rightNavIcon}>
-            <Icon name="phone" size={15} />
+            <Icon
+              name="phone"
+              size={18}
+              style={{transform: [{rotate: '100deg'}]}}
+            />
           </TouchableOpacity>
           <TouchableOpacity style={styles.rightNavIcon}>
-            <Icon name="clipboard" size={15} />
+            <Icon name="clipboard" size={18} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.rightNavIcon}
             onPress={() => setShowRightNavIconOption(!showRightNavIconOption)}>
-            <Icon name="ellipsis-v" size={15} />
+            <Icon name="ellipsis-v" size={18} />
           </TouchableOpacity>
         </View>
       </View>
@@ -72,7 +92,10 @@ const ChatDetail = () => {
           <Text>11. 19. (Kam)</Text>
         </View>
       )}
-      <View style={{padding: 15, flex: 1}}>
+      <TouchableOpacity
+        onPress={() => setShowBottomSheet(false)}
+        activeOpacity={1}
+        style={{padding: 15, paddingBottom: 0, flex: 1}}>
         <FlatList
           data={detailChat.data}
           renderItem={Item}
@@ -80,10 +103,61 @@ const ChatDetail = () => {
           //   contentContainerStyle={{paddingTop: 10}}
           showsVerticalScrollIndicator={false}
         />
+      </TouchableOpacity>
+      <View style={styles.bottomTabs}>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowBottomSheet(true);
+              Keyboard.dismiss();
+            }}>
+            <Icon name="plus" size={25} style={{marginRight: 10}} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Icon name="smile" size={25} />
+          </TouchableOpacity>
+        </View>
+        <TextInput
+          style={styles.inputMessage}
+          value={msgInput}
+          onChangeText={(text) => setMsgInput(text)}
+        />
+        <TouchableOpacity>
+          <Icon
+            name={msgInput.length > 0 ? 'telegram-plane' : 'microphone-alt'}
+            size={25}
+            style={msgInput.length > 0 && {transform: [{rotate: '45deg'}]}}
+          />
+        </TouchableOpacity>
       </View>
-      <View>
-          <Text>test</Text>
-      </View>
+      {showBottomSheet && (
+        <View style={styles.bottomSheetCustom}>
+          <View>
+            <TouchableOpacity style={styles.bottomSheetCustomItem}>
+              <Icon name="images" size={25} />
+              <Text>Pilih Foto</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.bottomSheetCustomItem}>
+              <Icon name="id-card" size={25} />
+              <Text>Teman</Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity style={styles.bottomSheetCustomItem}>
+              <Icon name="camera-retro" size={25} />
+              <Text>Ambil Foto</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.bottomSheetCustomItem}>
+              <Icon name="folder" size={25} />
+              <Text>Berkas</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.bottomSheetCustomItem}>
+            <Icon name="film" size={25} />
+            <Text>Pilih Video</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <Modal
         animationType="fade"
         statusBarTranslucent={false}
@@ -193,5 +267,31 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bottomTabs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+  },
+  inputMessage: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  bottomSheetCustom: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderColor: 'grey',
+    padding: 20,
+    paddingHorizontal: 30,
+    flex: 1,
+  },
+  bottomSheetCustomItem: {
+    marginBottom: 25,
+    alignItems: 'center',
+    // marginRight: 20,
+    // marginLeft: 10,
+    // backgroundColor: 'green',
   },
 });

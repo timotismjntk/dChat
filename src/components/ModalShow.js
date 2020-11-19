@@ -50,7 +50,12 @@ const ModalShowingOption = (props) => {
                 onPress={() => {
                   setModalVisible(close);
                 }}>
-                <Icon name="phone" size={20} color="black" />
+                <Icon
+                  name="phone"
+                  size={20}
+                  style={{transform: [{rotate: '100deg'}]}}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
             <View style={styles.centeredView}>
