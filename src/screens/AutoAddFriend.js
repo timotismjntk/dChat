@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 28,
-    fontFamily: 'babi',
   },
   wrapper: {
     marginTop: 15,
