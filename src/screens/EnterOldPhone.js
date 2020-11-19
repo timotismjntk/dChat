@@ -81,6 +81,7 @@ export default EnterOldPhone;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,

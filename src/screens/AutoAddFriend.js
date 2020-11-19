@@ -10,9 +10,12 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const AutoAddFriend = () => {
+const AutoAddFriend = (props) => {
   const [selected1, setSelected1] = useState(true);
   const [selected2, setSelected2] = useState(true);
+
+  const navigateTo = () => props.navigation.navigate('Home');
+
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
@@ -57,7 +60,9 @@ const AutoAddFriend = () => {
           alignItems: 'flex-end',
           padding: 20,
         }}>
-        <TouchableOpacity style={[styles.btn, {backgroundColor: '#0ac578'}]}>
+        <TouchableOpacity
+          onPress={navigateTo}
+          style={[styles.btn, {backgroundColor: '#0ac578'}]}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </View>
@@ -70,6 +75,7 @@ export default AutoAddFriend;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,

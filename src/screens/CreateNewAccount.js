@@ -15,10 +15,12 @@ import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import account from '../assets/account.jpg';
 
-const CreateNewAccount = () => {
+const CreateNewAccount = (props) => {
   const [name, setName] = useState('');
   const [error, SetError] = useState(false);
   const [items, setItems] = useState('');
+
+  const navigateTo = () => props.navigation.navigate('EnterNewPassword');
 
   const options = {
     title: 'Select Avatar',
@@ -97,16 +99,15 @@ const CreateNewAccount = () => {
           <TextInput
             placeholder="Nama Tampilan"
             style={[styles.input, name.length > 0 && {borderColor: '#0ac578'}]}
-            keyboardType="phone-pad"
-            onChangeText={(number) => {
-              setName(number);
+            onChangeText={(text) => {
+              setName(text);
               SetError(true);
             }}
             onFocus={() => SetError(true)}
             value={name}
           />
           {name.length < 0 && error && (
-            <Text style={styles.error}>Phone number is required</Text>
+            <Text style={styles.error}>Name is required</Text>
           )}
           {name.length > 0 && (
             <TouchableOpacity
@@ -123,6 +124,7 @@ const CreateNewAccount = () => {
           padding: 20,
         }}>
         <TouchableOpacity
+          onPress={navigateTo}
           style={[styles.btn, name.length > 0 && {backgroundColor: '#0ac578'}]}
           disabled={name.length > 0 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
@@ -137,6 +139,7 @@ export default CreateNewAccount;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
   },
   btnClear: {
     position: 'absolute',
-    top: 70,
+    top: 18,
     right: 20,
   },
   error: {

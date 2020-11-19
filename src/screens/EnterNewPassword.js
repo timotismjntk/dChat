@@ -12,12 +12,14 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const EnterNewPassword = () => {
+const EnterNewPassword = (props) => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [error, SetError] = useState(false);
   const [error2, SetError2] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
+
+  const navigateTo = () => props.navigation.navigate('AutoAddFriend');
 
   useEffect(() => {
     if (
@@ -110,6 +112,7 @@ const EnterNewPassword = () => {
           backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
+          onPress={navigateTo}
           style={[
             styles.btn,
             password.toString().length &&
@@ -141,6 +144,7 @@ export default EnterNewPassword;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,

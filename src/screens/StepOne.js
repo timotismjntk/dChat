@@ -13,9 +13,11 @@ import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const StepOne = () => {
+const StepOne = (props) => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
+
+  const navigateTo = () => props.navigation.navigate('StepTwo');
 
   return (
     <>
@@ -71,11 +73,17 @@ const StepOne = () => {
           padding: 20,
         }}>
         <TouchableOpacity
+          onPress={navigateTo}
           style={[
             styles.btn,
-            phone.toString().length >= 6 && {backgroundColor: '#0ac578'},
+            phone.toString().length >= 6 &&
+              phone.search('[a-zA-Z]') === -1 && {backgroundColor: '#0ac578'},
           ]}
-          disabled={phone.toString().length >= 6 ? false : true}>
+          disabled={
+            phone.toString().length >= 6 && phone.search('[a-zA-Z]') === -1
+              ? false
+              : true
+          }>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -88,6 +96,7 @@ export default StepOne;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,

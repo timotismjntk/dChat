@@ -8,38 +8,14 @@ import {
   TextInput,
   View,
   Keyboard,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import {Thumbnail} from 'native-base';
 
 import detailChat from '../API/detailChat.json';
-
-const Item = ({item, onPress, style}) => (
-  <View style={[styles.item, style]}>
-    {item.sender_message && (
-      <View style={[styles.messageWrap, {justifyContent: 'flex-end'}]}>
-        <TouchableOpacity
-          style={[styles.message, {backgroundColor: '#0ac578'}]}>
-          <Text style={{color: 'white'}}>{item.sender_message}</Text>
-        </TouchableOpacity>
-      </View>
-    )}
-    {item.receiver_message && (
-      <View style={styles.messageWrap}>
-        <TouchableOpacity>
-          <Thumbnail
-            small
-            source={{uri: detailChat.receiver_detail.profile_image}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.message, {marginLeft: 10}]}>
-          <Text>{item.receiver_message}</Text>
-        </TouchableOpacity>
-      </View>
-    )}
-  </View>
-);
+import EmojiSelector, {Categories} from 'react-native-emoji-selector';
 
 const ChatDetail = () => {
   const [showRightNavIconOption, setShowRightNavIconOption] = useState(false);
@@ -47,6 +23,7 @@ const ChatDetail = () => {
   const [turnNotifications, setTurnNotifications] = useState(false);
   const [msgInput, setMsgInput] = useState('');
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const [selectEmoticon, setSelectEmoticon] = useState(false);
   // to hide date after 5 min.
   setTimeout(() => {
     setHideDate(true);
@@ -60,15 +37,51 @@ const ChatDetail = () => {
       Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
     };
   }, []);
-  // to hide the bottomsheet when keyboar show
+  // to hide the bottomsheet when keyboard show
   const _keyboardDidShow = () => {
     setShowBottomSheet(false);
+    setSelectEmoticon(false);
   };
+
+  const Item = ({item, onPress, style}) => (
+    <TouchableOpacity
+      activeOpacity={1}
+      style={[styles.item, style]}
+      onPress={() => {
+        setShowBottomSheet(false);
+        setSelectEmoticon(false);
+      }}>
+      {item.sender_message && (
+        <View style={[styles.messageWrap, {justifyContent: 'flex-end'}]}>
+          <TouchableOpacity
+            style={[styles.message, {backgroundColor: '#0ac578'}]}>
+            <Text style={{color: 'white'}}>{item.sender_message}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {item.receiver_message && (
+        <View style={styles.messageWrap}>
+          <TouchableOpacity>
+            <Thumbnail
+              small
+              source={{uri: detailChat.receiver_detail.profile_image}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.message, {marginLeft: 10}]}>
+            <Text>{item.receiver_message}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
 
   return (
     <>
       <View style={styles.topNav}>
-        <Text style={styles.name}>{detailChat.receiver_detail.name}</Text>
+        <Text style={styles.name}>
+          {detailChat.receiver_detail.name.length >= 20 &&
+            detailChat.receiver_detail.name.slice(0, 20) + '...'}
+        </Text>
         <View style={styles.rightNav}>
           <TouchableOpacity style={styles.rightNavIcon}>
             <Icon
@@ -92,10 +105,15 @@ const ChatDetail = () => {
           <Text>11. 19. (Kam)</Text>
         </View>
       )}
-      <TouchableOpacity
-        onPress={() => setShowBottomSheet(false)}
-        activeOpacity={1}
-        style={{padding: 15, paddingBottom: 0, flex: 1}}>
+      <View
+        // onPress={() => setShowBottomSheet(false)}
+        // activeOpacity={1}
+        style={{
+          padding: 15,
+          paddingBottom: 0,
+          //   backgroundColor: 'red',
+          flex: 1,
+        }}>
         <FlatList
           data={detailChat.data}
           renderItem={Item}
@@ -103,26 +121,35 @@ const ChatDetail = () => {
           //   contentContainerStyle={{paddingTop: 10}}
           showsVerticalScrollIndicator={false}
         />
-      </TouchableOpacity>
+      </View>
       <View style={styles.bottomTabs}>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
             onPress={() => {
               setShowBottomSheet(true);
+              setSelectEmoticon(false);
               Keyboard.dismiss();
             }}>
             <Icon name="plus" size={25} style={{marginRight: 10}} />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="smile" size={25} />
+          <TouchableOpacity
+            onPress={() => {
+              setSelectEmoticon(!selectEmoticon);
+              setShowBottomSheet(false);
+              Keyboard.dismiss();
+            }}>
+            <Icon name={!selectEmoticon ? 'smile' : 'keyboard'} size={25} />
           </TouchableOpacity>
         </View>
         <TextInput
+          multiline={true}
           style={styles.inputMessage}
           value={msgInput}
           onChangeText={(text) => setMsgInput(text)}
         />
-        <TouchableOpacity>
+        <TouchableOpacity
+          disabled={msgInput.length > 0 ? false : true}
+          onPress={() => Alert.alert(JSON.stringify(msgInput))}>
           <Icon
             name={msgInput.length > 0 ? 'telegram-plane' : 'microphone-alt'}
             size={25}
@@ -157,6 +184,18 @@ const ChatDetail = () => {
             <Text>Pilih Video</Text>
           </TouchableOpacity>
         </View>
+      )}
+      {selectEmoticon && (
+        <EmojiSelector
+          style={{borderTopWidth: 0.6, borderColor: 'grey', height: 250}}
+          // category={Categories.all}
+          onEmojiSelected={(emoji) => setMsgInput(msgInput + emoji)}
+          // showTabs={false}
+          columns={10}
+          showSearchBar={false}
+          // showHistory={false}
+          // showSectionTitles={false}
+        />
       )}
       <Modal
         animationType="fade"
@@ -208,6 +247,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
+    paddingBottom: 5,
+    paddingTop: 30,
     width: '100%',
   },
   rightNav: {

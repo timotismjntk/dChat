@@ -12,9 +12,11 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const StepTwo = () => {
+const StepTwo = (props) => {
   const [verification, setVerification] = useState('');
   const [error, SetError] = useState(false);
+
+  const navigateTo = () => props.navigation.navigate('StepThree');
 
   return (
     <>
@@ -63,6 +65,7 @@ const StepTwo = () => {
           padding: 20,
         }}>
         <TouchableOpacity
+          onPress={navigateTo}
           style={[
             styles.btn,
             verification.toString().length >= 6 && {backgroundColor: '#0ac578'},
@@ -80,6 +83,7 @@ export default StepTwo;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    paddingTop: 55,
   },
   header: {
     fontSize: 28,

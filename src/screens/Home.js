@@ -8,29 +8,49 @@ import OptionsModal from '../components/ModalShow';
 
 import chatList from '../API/chatList.json';
 
-const Item = ({item, onPress, style}) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <View style={styles.itemWrap}>
-      <TouchableOpacity>
-        <Thumbnail source={{uri: item.profile_image}} />
-      </TouchableOpacity>
-      <View style={styles.itemDetail}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.message}>{item.message}</Text>
-      </View>
-    </View>
-    <View>
-      <Text style={styles.time}>{moment(item.last_sent).format('Ahh:mm')}</Text>
-      <Text />
-    </View>
-  </TouchableOpacity>
-);
-
-const Home = () => {
+const Home = (props) => {
   const [openModal, setOpenModal] = useState(false);
 
+  const navigateTo = () => props.navigation.navigate('ChatDetail');
+
+  const Item = ({item, onPress, style}) => (
+    <TouchableOpacity onPress={navigateTo} style={[styles.item, style]}>
+      <View style={styles.itemWrap}>
+        <TouchableOpacity>
+          <Thumbnail source={{uri: item.profile_image}} />
+        </TouchableOpacity>
+        <View style={styles.itemDetail}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.message}>{item.message}</Text>
+        </View>
+      </View>
+      <View>
+        <Text style={styles.time}>
+          {moment(item.last_sent).format('Ahh:mm')}
+        </Text>
+        <Text />
+      </View>
+    </TouchableOpacity>
+  );
   return (
     <>
+      <View style={styles.topNav}>
+        <Text style={styles.brand}>d•Chat</Text>
+        <View style={styles.rightNav}>
+          <TouchableOpacity style={styles.rightNavIcon}>
+            <Icon name="clipboard" size={18} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rightNavIcon}>
+            <Icon name="user" size={18} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rightNavIcon}>
+            <Icon name="user-plus" size={18} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rightNavIcon}>
+            <Icon name="cog" size={18} />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.parent}>
         {/* <Text>Home</Text> */}
         <FlatList
@@ -41,7 +61,6 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      <OptionsModal open={openModal} close={() => setOpenModal(false)} />
       <View style={styles.wrapperShowModal}>
         <TouchableOpacity
           style={styles.openButton}
@@ -51,6 +70,9 @@ const Home = () => {
           <Icon name={!openModal ? 'plus' : 'times'} size={25} color="white" />
         </TouchableOpacity>
       </View>
+      <View>
+        <OptionsModal open={openModal} close={() => setOpenModal(false)} />
+      </View>
     </>
   );
 };
@@ -58,9 +80,31 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
+  topNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    paddingBottom: 5,
+    paddingTop: 30,
+    width: '100%',
+  },
+  rightNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rightNavIcon: {
+    marginLeft: 25,
+  },
+  brand: {
+    color: '#0ac578',
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
   parent: {
-    // flex: 1,
+    flex: 1,
     padding: 20,
+    paddingBottom: 0,
     paddingTop: 10,
     position: 'relative',
   },
@@ -83,7 +127,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 25,
     marginRight: 15,
-    zIndex: 5,
   },
   item: {
     flexDirection: 'row',
