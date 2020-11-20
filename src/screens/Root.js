@@ -21,6 +21,7 @@ import AutoAddFriend from '../screens/AutoAddFriend';
 //
 import Home from '../screens/Home';
 import ChatDetail from '../screens/ChatDetail';
+import StartNewChat from '../screens/StartNewChat';
 
 const Root = () => {
   return (
@@ -87,6 +88,21 @@ const Root = () => {
           name="ChatDetail"
           component={ChatDetail}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="StartNewChat"
+          component={StartNewChat}
+          options={{
+            headerStyle: {
+              elevation: 1,
+              shadowOpacity: 0,
+              backgroundColor: 'white',
+            },
+            headerTitle: 'Mulai mengobrol',
+            headerLeft: () => {
+              return null;
+            },
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

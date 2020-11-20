@@ -1,0 +1,90 @@
+{
+    "success": true,
+    "message": "list of contacts",
+    "data": [
+        {
+            "id": 1,
+            "name": "Timotius",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 2,
+            "name": "Wahyu",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 3,
+            "name": "Satrio",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 4,
+            "name": "Fahmi",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 5,
+            "name": "Kodri",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 6,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 7,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 8,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 9,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 10,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 11,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        },
+        {
+            "id": 12,
+            "name": "Lisa",
+            "status_message": "NKRI HARGA MATI",
+            "profile_image": "https://m.ayosemarang.com/images-semarang/post/articles/2019/12/05/48390/jokowi.jpg",
+            "phone_number": "081285883084"
+        }
+    ]
+}

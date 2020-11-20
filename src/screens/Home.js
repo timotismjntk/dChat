@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/EvilIcons';
 import {Thumbnail} from 'native-base';
 import moment from 'moment';
 // import components
@@ -11,10 +12,12 @@ import chatList from '../API/chatList.json';
 const Home = (props) => {
   const [openModal, setOpenModal] = useState(false);
 
-  const navigateTo = () => props.navigation.navigate('ChatDetail');
+  const navigateToChatDetail = () => props.navigation.navigate('ChatDetail');
 
   const Item = ({item, onPress, style}) => (
-    <TouchableOpacity onPress={navigateTo} style={[styles.item, style]}>
+    <TouchableOpacity
+      onPress={navigateToChatDetail}
+      style={[styles.item, style]}>
       <View style={styles.itemWrap}>
         <TouchableOpacity>
           <Thumbnail source={{uri: item.profile_image}} />
@@ -26,7 +29,7 @@ const Home = (props) => {
       </View>
       <View>
         <Text style={styles.time}>
-          {moment(item.last_sent).format('Ahh:mm')}
+          {moment(item.last_sent).format('hh:mm A')}
         </Text>
         <Text />
       </View>
@@ -67,11 +70,20 @@ const Home = (props) => {
           onPress={() => {
             setOpenModal(true);
           }}>
-          <Icon name={!openModal ? 'plus' : 'times'} size={25} color="white" />
+          <Ionicons
+            style={!openModal && {transform: [{rotate: '45deg'}]}}
+            name={!openModal ? 'close' : 'close'}
+            size={25}
+            color="white"
+          />
         </TouchableOpacity>
       </View>
       <View>
-        <OptionsModal open={openModal} close={() => setOpenModal(false)} />
+        <OptionsModal
+          open={openModal}
+          close={() => setOpenModal(false)}
+          navigation={() => props.navigation.navigate('StartNewChat')}
+        />
       </View>
     </>
   );
@@ -87,6 +99,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingBottom: 5,
     paddingTop: 30,
+    backgroundColor: 'white',
     width: '100%',
   },
   rightNav: {
@@ -107,6 +120,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     paddingTop: 10,
     position: 'relative',
+    backgroundColor: 'white',
   },
   wrapperShowModal: {
     justifyContent: 'flex-end',

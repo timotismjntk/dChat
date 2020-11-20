@@ -2,10 +2,15 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/EvilIcons';
 
 const ModalShowingOption = (props) => {
   const {open, close} = props;
   const [modalVisible, setModalVisible] = useState(open);
+
+  const navigateToStartNewChat = () => {
+    props.navigation();
+  };
 
   useEffect(() => {
     if (open === true) {
@@ -63,6 +68,7 @@ const ModalShowingOption = (props) => {
                 style={styles.btnIcon}
                 onPress={() => {
                   setModalVisible(close);
+                  navigateToStartNewChat();
                 }}>
                 <Icon name="comment-dots" size={20} color="black" />
               </TouchableOpacity>
@@ -73,7 +79,7 @@ const ModalShowingOption = (props) => {
                 onPress={() => {
                   setModalVisible(close);
                 }}>
-                <Icon name="times" size={25} color="white" />
+                <Ionicons name="close" size={25} color="white" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
