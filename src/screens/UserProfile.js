@@ -11,9 +11,19 @@ import account from '../assets/account.jpg';
 
 import userProfile from '../API/userProfile.json';
 
-const UserProfile = () => {
+const UserProfile = (props) => {
   const [items, setItems] = useState('');
   const [isSelected, setSelected] = useState(false);
+
+  const navigateToAddName = () => {
+    props.navigation.navigate('AddName');
+  };
+  const navigateToAddStatusMessage = () => {
+    props.navigation.navigate('AddStatusMessage');
+  };
+  const navigateToAddUniqueId = () => {
+    props.navigation.navigate('AddUniqueId');
+  };
 
   const options = {
     title: 'Select Avatar',
@@ -46,7 +56,7 @@ const UserProfile = () => {
     }
   };
   return (
-    <View>
+    <View style={{backgroundColor: 'white', flex: 1}}>
       <View style={styles.header}>
         <Thumbnail
           large
@@ -84,11 +94,15 @@ const UserProfile = () => {
         </View>
       </View>
       <View style={{paddingLeft: 15}}>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToAddName}
+          style={styles.bodyWrapper}>
           <Text style={styles.titleName}>Nama tampilan</Text>
           <Text style={styles.name}>{userProfile.user_profile.name}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToAddStatusMessage}
+          style={styles.bodyWrapper}>
           <Text style={styles.titleMessageStatus}>Pesan Status</Text>
           <Text style={styles.status_message}>
             {userProfile.user_profile.status_message
@@ -96,7 +110,9 @@ const UserProfile = () => {
               : 'Belum Diatur'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToAddUniqueId}
+          style={styles.bodyWrapper}>
           <Text style={styles.titleUniqueId}>ID Pengguna</Text>
           <Text style={styles.unique_id}>
             {userProfile.user_profile.unique_id
@@ -142,6 +158,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 0.3,
     borderColor: 'grey',
+    backgroundColor: 'white',
   },
   camera: {
     position: 'absolute',

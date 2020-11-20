@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
 
-const ModalShowingOption = (props) => {
+const ModalShowOptions = (props) => {
   const {open, close} = props;
   const [modalVisible, setModalVisible] = useState(open);
 
@@ -36,7 +36,7 @@ const ModalShowingOption = (props) => {
             style={{
               flex: 1,
               justifyContent: 'flex-end',
-              backgroundColor: 'rgba(100,105,110, 0.65)',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
               paddingBottom: 5,
               paddingRight: 15,
             }}>
@@ -75,7 +75,7 @@ const ModalShowingOption = (props) => {
             </View>
             <View style={[styles.centeredView, {marginBottom: 20}]}>
               <TouchableOpacity
-                style={{...styles.btnIcon, backgroundColor: '#0ac578'}}
+                style={{...styles.btnIcon, backgroundColor: '#00B900'}}
                 onPress={() => {
                   setModalVisible(close);
                 }}>
@@ -89,7 +89,7 @@ const ModalShowingOption = (props) => {
   );
 };
 
-export default ModalShowingOption;
+export default ModalShowOptions;
 
 const styles = StyleSheet.create({
   centeredView: {

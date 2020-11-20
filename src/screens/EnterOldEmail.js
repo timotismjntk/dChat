@@ -20,7 +20,9 @@ const EnterOldEmail = () => {
       email.includes('@mail.co.id') ||
       email.includes('@mail.com') ||
       email.includes('@mail.c') ||
+      email.includes('@mail.co') ||
       email.includes('@gmail.c') ||
+      email.includes('@gmail.co') ||
       email.includes('@gmail.co.id') ||
       email.includes('@gmail.com')
     ) {
@@ -45,7 +47,7 @@ const EnterOldEmail = () => {
         <KeyboardAvoidingView>
           <TextInput
             placeholder="Alamat Email"
-            style={[styles.input, email.length > 0 && {borderColor: '#0ac578'}]}
+            style={[styles.input, email.length > 0 && {borderColor: '#00B900'}]}
             keyboardType="email-address"
             onChangeText={(text) => {
               setEmail(text);
@@ -77,7 +79,7 @@ const EnterOldEmail = () => {
           padding: 20,
         }}>
         <TouchableOpacity
-          style={[styles.btn, !error && {backgroundColor: '#0ac578'}]}
+          style={[styles.btn, !error && {backgroundColor: '#00B900'}]}
           disabled={error ? true : false}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   link: {
-    color: '#0ac578',
+    color: '#00B900',
   },
   input: {
     width: '100%',

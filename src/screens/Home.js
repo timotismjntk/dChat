@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/EvilIcons';
 import {Thumbnail} from 'native-base';
 import moment from 'moment';
 // import components
-import OptionsModal from '../components/ModalShow';
+import OptionsModal from '../components/ModalShowOptions';
 
 import chatList from '../API/chatList.json';
 
@@ -13,6 +13,9 @@ const Home = (props) => {
   const [openModal, setOpenModal] = useState(false);
 
   const navigateToChatDetail = () => props.navigation.navigate('ChatDetail');
+  const navigateToSettingAccount = () => {
+    props.navigation.navigate('SettingAccount');
+  };
 
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
@@ -49,7 +52,9 @@ const Home = (props) => {
           <TouchableOpacity style={styles.rightNavIcon}>
             <Icon name="user-plus" size={18} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.rightNavIcon}>
+          <TouchableOpacity
+            onPress={navigateToSettingAccount}
+            style={styles.rightNavIcon}>
             <Icon name="cog" size={18} />
           </TouchableOpacity>
         </View>
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    paddingBottom: 5,
+    paddingBottom: 0,
     paddingTop: 30,
     backgroundColor: 'white',
     width: '100%',
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
     marginLeft: 25,
   },
   brand: {
-    color: '#0ac578',
+    color: '#00B900',
     fontWeight: 'bold',
     fontSize: 22,
   },
@@ -131,7 +136,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   openButton: {
-    backgroundColor: '#0ac578',
+    backgroundColor: '#00B900',
     borderRadius: 30,
     padding: 10,
     elevation: 2,

@@ -33,7 +33,7 @@ const StepTwo = (props) => {
             placeholder="__ __ __ __ __ __"
             style={[
               styles.input,
-              verification.toString().length >= 6 && {borderColor: '#0ac578'},
+              verification.toString().length >= 6 && {borderColor: '#00B900'},
             ]}
             keyboardType="phone-pad"
             onChangeText={(number) => {
@@ -68,7 +68,7 @@ const StepTwo = (props) => {
           onPress={navigateTo}
           style={[
             styles.btn,
-            verification.toString().length >= 6 && {backgroundColor: '#0ac578'},
+            verification.toString().length >= 6 && {backgroundColor: '#00B900'},
           ]}
           disabled={verification.toString().length >= 6 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   link: {
-    color: '#0ac578',
+    color: '#00B900',
     textDecorationLine: 'underline',
   },
   input: {

@@ -18,12 +18,20 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import userProfile from '../API/userProfile.json';
 
-const Profile = () => {
+const SettingAccount = (props) => {
   const [items, setItems] = useState('');
+
+  const navigateToUserProfile = () => {
+    props.navigation.navigate('UserProfile');
+  };
+  const navigateToAccount = () => {
+    props.navigation.navigate('ProfileDetail');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
-        <TouchableOpacity style={styles.header}>
+        <TouchableOpacity style={styles.header} onPress={navigateToUserProfile}>
           <Thumbnail
             large
             source={
@@ -45,11 +53,13 @@ const Profile = () => {
           </View>
         </TouchableOpacity>
         <View style={styles.listItemWrapper}>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity
+            onPress={navigateToUserProfile}
+            style={styles.listItem}>
             <SimpleIcon name="user" size={16} />
             <Text style={styles.listItemText}>Profil</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity onPress={navigateToAccount} style={styles.listItem}>
             <Feather name="clipboard" size={16} />
             <Text style={styles.listItemText}>Akun</Text>
           </TouchableOpacity>
@@ -95,11 +105,12 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default SettingAccount;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
+    paddingTop: 25,
   },
   header: {
     flexDirection: 'row',

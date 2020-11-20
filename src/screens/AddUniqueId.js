@@ -17,7 +17,7 @@ const AddUniqueId = () => {
           style={[
             styles.input,
             uniqueId.length > 0 && {
-              borderColor: '#0ac578',
+              borderColor: '#00B900',
               borderBottomWidth: 0.7,
             },
           ]}
@@ -41,7 +41,7 @@ const AddUniqueId = () => {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            uniqueId.length >= 4 && {backgroundColor: '#0ac578'},
+            uniqueId.length >= 4 && {backgroundColor: '#00B900'},
           ]}
           disabled={uniqueId.length >= 4 ? false : true}>
           <Text style={styles.submittext}>Periksa</Text>
@@ -56,6 +56,7 @@ export default AddUniqueId;
 const styles = StyleSheet.create({
   container: {
     padding: 25,
+    backgroundColor: 'white',
     flex: 1,
   },
   input: {

@@ -16,7 +16,7 @@ const AddName = () => {
         <TextInput
           style={[
             styles.input,
-            name.length > 0 && {borderColor: '#0ac578', borderBottomWidth: 0.7},
+            name.length > 0 && {borderColor: '#00B900', borderBottomWidth: 0.7},
           ]}
           maxLength={20}
           onChangeText={(text) => setName(text)}
@@ -36,7 +36,7 @@ const AddName = () => {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            name.length > 0 && {backgroundColor: '#0ac578'},
+            name.length > 0 && {backgroundColor: '#00B900'},
           ]}
           disabled={name.length > 0 ? false : true}>
           <Text style={styles.submittext}>OK</Text>
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 25,
     flex: 1,
+    backgroundColor: 'white',
   },
   input: {
     borderBottomWidth: 0.4,

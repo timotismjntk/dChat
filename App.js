@@ -5,13 +5,13 @@ import {PersistGate} from 'redux-persist/integration/react';
 
 // Import Screens
 import Root from './src/screens/Root';
-import ProfileDetail from './src/screens/ProfileDetail';
+import QRCode from './src/screens/QRCode';
 export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <ProfileDetail />
+          <Root />
         </PersistGate>
       </Provider>
     );

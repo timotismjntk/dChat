@@ -45,7 +45,7 @@ const StepOne = (props) => {
             placeholder="Nomor Telepon"
             style={[
               styles.input,
-              phone.toString().length >= 6 && {borderColor: '#0ac578'},
+              phone.toString().length >= 6 && {borderColor: '#00B900'},
             ]}
             keyboardType="phone-pad"
             onChangeText={(number) => {
@@ -77,7 +77,7 @@ const StepOne = (props) => {
           style={[
             styles.btn,
             phone.toString().length >= 6 &&
-              phone.search('[a-zA-Z]') === -1 && {backgroundColor: '#0ac578'},
+              phone.search('[a-zA-Z]') === -1 && {backgroundColor: '#00B900'},
           ]}
           disabled={
             phone.toString().length >= 6 && phone.search('[a-zA-Z]') === -1
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   link: {
-    color: '#0ac578',
+    color: '#00B900',
     textDecorationLine: 'underline',
   },
   input: {

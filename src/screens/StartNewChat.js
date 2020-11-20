@@ -27,7 +27,7 @@ const StartNewChat = (props) => {
         </TouchableOpacity>
         <View style={styles.itemDetail}>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.message}>{item.status_message}</Text>
+          <Text style={styles.status_message}>{item.status_message}</Text>
         </View>
       </View>
       <CheckBox
@@ -120,6 +120,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     // flex: 1,
+  },
+  status_message: {
+    fontSize: 9,
+    color: 'grey',
   },
   btnCreateConversation: {
     backgroundColor: '#bfbfbf',

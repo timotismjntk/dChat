@@ -17,7 +17,7 @@ const AddStatusMessage = () => {
           style={[
             styles.input,
             statusMessage.length > 0 && {
-              borderColor: '#0ac578',
+              borderColor: '#00B900',
               borderBottomWidth: 0.7,
             },
           ]}
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 25,
     flex: 1,
+    backgroundColor: 'white',
   },
   input: {
     borderBottomWidth: 0.3,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     right: 22,
   },
   submitButton: {
-    backgroundColor: '#0ac578',
+    backgroundColor: '#00B900',
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',

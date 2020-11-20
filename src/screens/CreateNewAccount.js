@@ -98,7 +98,7 @@ const CreateNewAccount = (props) => {
         <KeyboardAvoidingView>
           <TextInput
             placeholder="Nama Tampilan"
-            style={[styles.input, name.length > 0 && {borderColor: '#0ac578'}]}
+            style={[styles.input, name.length > 0 && {borderColor: '#00B900'}]}
             onChangeText={(text) => {
               setName(text);
               SetError(true);
@@ -125,7 +125,7 @@ const CreateNewAccount = (props) => {
         }}>
         <TouchableOpacity
           onPress={navigateTo}
-          style={[styles.btn, name.length > 0 && {backgroundColor: '#0ac578'}]}
+          style={[styles.btn, name.length > 0 && {backgroundColor: '#00B900'}]}
           disabled={name.length > 0 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   link: {
-    color: '#0ac578',
+    color: '#00B900',
   },
   input: {
     width: '100%',

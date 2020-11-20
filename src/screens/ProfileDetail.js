@@ -1,19 +1,36 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {CheckBox} from 'react-native-btr';
 
 import userProfile from '../API/userProfile.json';
 
-const ProfileDetail = () => {
+const ProfileDetail = (props) => {
   const [isAllowAdd, setIsAllowAdd] = useState(false);
   const [isAllowLogin, setIsAllowLogin] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+
+  const navigateToChangePhoneNumberParent = () => {
+    props.navigation.navigate('ChangePhoneNumberParent');
+  };
+  const navigateToChangePassword = () => {
+    props.navigation.navigate('ChangePassword');
+  };
+  const navigateToDevices = () => {
+    props.navigation.navigate('Devices');
+  };
+  const navigateToQRCode = () => {
+    props.navigation.navigate('QRCode');
+  };
+  const deleteAccount = () => setShowModalDelete(true);
 
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={{paddingLeft: 15}}>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToChangePhoneNumberParent}
+          style={styles.bodyWrapper}>
           <Text style={styles.titlePhone}>Nomor Telepon</Text>
           <Text style={styles.phoneNumber}>
             {userProfile.user_profile.phone_number}
@@ -27,7 +44,9 @@ const ProfileDetail = () => {
               : 'Belum Diatur'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToChangePassword}
+          style={styles.bodyWrapper}>
           <Text style={styles.titlePassword}>Kata Sandi</Text>
           <Text style={styles.password}>Selesai</Text>
         </TouchableOpacity>
@@ -74,16 +93,46 @@ const ProfileDetail = () => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          onPress={navigateToDevices}
+          style={styles.bodyWrapper}>
           <Text style={styles.device}>Perangkat</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity onPress={navigateToQRCode} style={styles.bodyWrapper}>
           <Text style={styles.qrCode}>Kode QR</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity onPress={deleteAccount} style={styles.bodyWrapper}>
           <Text style={styles.deleteAccount}>Hapus Akun</Text>
         </TouchableOpacity>
       </View>
+      <Modal
+        animationType="fade"
+        statusBarTranslucent={false}
+        transparent={true}
+        onRequestClose={() => setShowModalDelete(false)}
+        visible={showModalDelete}>
+        <View style={styles.modal}>
+          <View style={styles.modalContent}>
+            <Text style={styles.warningModalText}>
+              Setelah akun dihapus, Anda tidak{'\n'}
+              akan dapat memperoleh kembali daftar teman, obrolan, atau riwayat
+              pembelian. Yakin ingin melanjutkan?
+            </Text>
+            <View style={styles.btnModalContainer}>
+              <TouchableOpacity
+                style={styles.btnModal}
+                onPress={() => setShowModalDelete(false)}>
+                <Text>Batal</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btnModal}
+                onPress={() => setShowModalDelete(false)}>
+                <Text style={{color: '#0ac578'}}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -156,5 +205,34 @@ const styles = StyleSheet.create({
   deleteAccount: {
     fontSize: 16,
     color: 'black',
+  },
+  modal: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  modalContent: {
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 3,
+  },
+  warningModalText: {
+    color: 'grey',
+    fontSize: 15,
+  },
+  btnModalContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    // backgroundColor: 'red',
+    // width: '40%',
+  },
+  btnModal: {
+    padding: 30,
+    paddingTop: 25,
+    paddingBottom: 0,
   },
 });

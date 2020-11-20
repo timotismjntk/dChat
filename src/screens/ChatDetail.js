@@ -54,7 +54,7 @@ const ChatDetail = () => {
       {item.sender_message && (
         <View style={[styles.messageWrap, {justifyContent: 'flex-end'}]}>
           <TouchableOpacity
-            style={[styles.message, {backgroundColor: '#0ac578'}]}>
+            style={[styles.message, {backgroundColor: '#00B900'}]}>
             <Text style={{color: 'white'}}>{item.sender_message}</Text>
           </TouchableOpacity>
         </View>

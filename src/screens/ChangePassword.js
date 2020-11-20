@@ -12,14 +12,12 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const EnterNewPassword = (props) => {
+const ChangePassword = (props) => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [error, SetError] = useState(false);
   const [error2, SetError2] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
-
-  const navigateTo = () => props.navigation.navigate('AutoAddFriend');
 
   useEffect(() => {
     if (
@@ -37,17 +35,10 @@ const EnterNewPassword = (props) => {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Buat Kata Sandi</Text>
-        <View style={styles.wrapper}>
-          <Text style={styles.info}>
-            Password minimal sama dengan 6 karakter.{'\n'}
-            Gunakan setidaknya satu huruf, satu{'\n'}
-            angka, dan empat karakter lainnya
-          </Text>
-        </View>
         <KeyboardAvoidingView>
           <TextInput
-            placeholder="Masukkan Kata Sandi"
+            autoFocus={true}
+            placeholder="Kata Sandi (6 s/d 20 kar.)"
             style={[
               styles.input,
               password.toString().length >= 6 && {borderColor: '#00B900'},
@@ -76,7 +67,7 @@ const EnterNewPassword = (props) => {
         </KeyboardAvoidingView>
         <KeyboardAvoidingView>
           <TextInput
-            placeholder="Masukkan Sekali lagi"
+            placeholder="Konfirmasi ulang kata sandi"
             style={[
               styles.input,
               repeatPassword.toString().length >= 6 && {borderColor: '#00B900'},
@@ -106,13 +97,10 @@ const EnterNewPassword = (props) => {
       </ScrollView>
       <KeyboardAvoidingView
         style={{
-          alignItems: 'flex-end',
-          padding: 20,
           paddingTop: 0,
           backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
-          onPress={navigateTo}
           style={[
             styles.btn,
             password.toString().length &&
@@ -132,22 +120,21 @@ const EnterNewPassword = (props) => {
               ? false
               : true
           }>
-          <Icon name="arrow-right" size={20} color="white" />
+          <Text style={{color: 'white', fontSize: 18}}>Berikutnya</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </>
   );
 };
 
-export default EnterNewPassword;
+export default ChangePassword;
 
 const styles = StyleSheet.create({
   container: {
     padding: 25,
-    paddingTop: 55,
-  },
-  header: {
-    fontSize: 28,
+    // paddingTop: 55,
+    backgroundColor: 'white',
+    flex: 1,
   },
   wrapper: {
     marginTop: 15,
@@ -164,19 +151,18 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     // backgroundColor: 'red',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.6,
     borderColor: '#a5acaf',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '100',
     marginBottom: 5,
   },
   btn: {
     backgroundColor: '#a5acaf',
-    width: 50,
-    height: 50,
+    // width: 50,
+    height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 30,
   },
   btnClear: {
     position: 'absolute',

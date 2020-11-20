@@ -35,7 +35,7 @@ const AutoAddFriend = (props) => {
             <TouchableOpacity
               style={[
                 styles.btnCheck,
-                selected1 && {backgroundColor: '#0ac578'},
+                selected1 && {backgroundColor: '#00B900'},
               ]}
               onPress={() => setSelected1(!selected1)}>
               <Icon name="check" color="white" size={12} />
@@ -46,7 +46,7 @@ const AutoAddFriend = (props) => {
             <TouchableOpacity
               style={[
                 styles.btnCheck,
-                selected2 && {backgroundColor: '#0ac578'},
+                selected2 && {backgroundColor: '#00B900'},
               ]}
               onPress={() => setSelected2(!selected2)}>
               <Icon name="check" color="white" size={12} />
@@ -62,7 +62,7 @@ const AutoAddFriend = (props) => {
         }}>
         <TouchableOpacity
           onPress={navigateTo}
-          style={[styles.btn, {backgroundColor: '#0ac578'}]}>
+          style={[styles.btn, {backgroundColor: '#00B900'}]}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </View>
