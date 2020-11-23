@@ -5,7 +5,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 
 // Import Screens
 import Root from './src/screens/Root';
-import QRCode from './src/screens/QRCode';
+import ForgotPassword from './src/screens/ForgotPassword';
 export default class App extends Component {
   render() {
     return (

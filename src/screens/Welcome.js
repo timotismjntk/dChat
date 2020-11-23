@@ -12,7 +12,11 @@ import {useNavigation} from '@react-navigation/native';
 import Logo from '../assets/logo.png';
 
 export default function Welcome(props) {
-  const navigateTo = () => props.navigation.navigate('StepOne');
+  const navigateToStepOne = () => props.navigation.navigate('StepOne'); // Mulai
+  const navigateToLoginWithEmail = () => {
+    props.navigation.navigate('LoginWithEmail');
+  };
+
   return (
     <View style={styles.parent}>
       <StatusBar translucent backgroundColor="black" />
@@ -27,10 +31,10 @@ export default function Welcome(props) {
         </Text>
       </View>
       <View styles={styles.wrapper}>
-        <TouchableOpacity style={styles.btn} onPress={navigateTo}>
+        <TouchableOpacity style={styles.btn} onPress={navigateToStepOne}>
           <Text style={styles.btnStart}>Mulai</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={navigateToLoginWithEmail}>
           <Text style={styles.alreadyAccount}>
             Login dengan Alamat Email atau {'\n'}Kode QR
           </Text>

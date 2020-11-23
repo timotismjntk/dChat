@@ -27,13 +27,13 @@ const StepOne = (props) => {
         </Text>
         <View style={styles.wrapper}>
           <Text style={styles.info}>
-            Pastikan Anda menyetujui
+            Pastikan Anda menyetujui{' '}
             <Text style={styles.link}>
-              {' '}
-              Syarat dan{'\n'} ketentuan Penggunaan{' '}
-            </Text>
-            Serta<Text style={styles.link}> Kebijakan{'\n'}Privasi </Text>
-            d•Chat sebelum memasukkan nomor telepon dan mengetuk tombol {'\n'}
+              {''}
+              Syarat dan{'\n'}ketentuan Penggunaan{''}
+            </Text>{' '}
+            Serta <Text style={styles.link}>Kebijakan{'\n'}Privasi</Text> d•Chat
+            sebelum memasukkan nomor telepon dan mengetuk tombol {'\n'}
             panah.
           </Text>
         </View>

@@ -6,15 +6,25 @@ import {Thumbnail} from 'native-base';
 import moment from 'moment';
 // import components
 import OptionsModal from '../components/ModalShowOptions';
+import ModalShowOtherUserPreview from '../components/ModalShowOtherUserPreview';
 
 import chatList from '../API/chatList.json';
 
 const Home = (props) => {
   const [openModal, setOpenModal] = useState(false);
+  const [openModalPreviewUser, setOpenModalPreviewUser] = useState(false);
+  const [sendImageToComponents, setSendImageToComponents] = useState(''); // this for send image to component when user click image from chat
+  const [sendUserNameToComponents, setSendUserNameToComponents] = useState(''); // this for send image to component when user click image from chat
 
   const navigateToChatDetail = () => props.navigation.navigate('ChatDetail');
   const navigateToSettingAccount = () => {
     props.navigation.navigate('SettingAccount');
+  };
+  const navigateToAddFriend = () => {
+    props.navigation.navigate('AddFriend');
+  };
+  const navigateToFriend = () => {
+    props.navigation.navigate('Friend');
   };
 
   const Item = ({item, onPress, style}) => (
@@ -22,7 +32,12 @@ const Home = (props) => {
       onPress={navigateToChatDetail}
       style={[styles.item, style]}>
       <View style={styles.itemWrap}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setOpenModalPreviewUser(true);
+            setSendImageToComponents(item.profile_image);
+            setSendUserNameToComponents(item.name);
+          }}>
           <Thumbnail source={{uri: item.profile_image}} />
         </TouchableOpacity>
         <View style={styles.itemDetail}>
@@ -46,10 +61,14 @@ const Home = (props) => {
           <TouchableOpacity style={styles.rightNavIcon}>
             <Icon name="clipboard" size={18} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.rightNavIcon}>
+          <TouchableOpacity
+            onPress={navigateToFriend}
+            style={styles.rightNavIcon}>
             <Icon name="user" size={18} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.rightNavIcon}>
+          <TouchableOpacity
+            onPress={navigateToAddFriend}
+            style={styles.rightNavIcon}>
             <Icon name="user-plus" size={18} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -88,6 +107,13 @@ const Home = (props) => {
           open={openModal}
           close={() => setOpenModal(false)}
           navigation={() => props.navigation.navigate('StartNewChat')}
+        />
+        <ModalShowOtherUserPreview
+          navigation={() => props.navigation.navigate('ChatDetail')}
+          open={openModalPreviewUser}
+          close={() => setOpenModalPreviewUser(false)}
+          profileImage={sendImageToComponents}
+          userName={sendUserNameToComponents}
         />
       </View>
     </>

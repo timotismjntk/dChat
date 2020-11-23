@@ -1,13 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 const Stack = createStackNavigator();
 
+// import component share modal
+import ShareModal from '../components/ShareModal';
+import GoToAddFriendFromHeader from '../components/GoToAddFriendFromHeader';
+import GotoCreateGroupFromHeader from '../components/GotoCreateGroupFromHeader';
+
 // import screens
 import Welcome from '../screens/Welcome';
+//
+import LoginWithEmail from '../screens/LoginWithEmail';
+//
 import StepOne from '../screens/StepOne';
 import StepTwo from '../screens/StepTwo';
 import StepThree from '../screens/StepThree';
@@ -39,8 +48,18 @@ import ChangePassword from '../screens/ChangePassword';
 //
 import Devices from '../screens/Devices';
 import QRCode from '../screens/QRCode';
+//
+import AddFriend from '../screens/AddFriend';
+//
+import Friend from '../screens/Friend';
+//
+import CreateGroup from '../screens/CreateGroup';
+//
+import PreviewProfileImage from '../screens/PreviewProfileImage';
 
-const Root = () => {
+const Root = (props) => {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -49,6 +68,13 @@ const Root = () => {
           name="Welcome"
           component={Welcome}
         />
+        {/* ---- */}
+        <Stack.Screen
+          name="LoginWithEmail"
+          component={LoginWithEmail}
+          options={{headerShown: false}}
+        />
+        {/* ---- */}
         <Stack.Screen
           name="StepOne"
           component={StepOne}
@@ -334,6 +360,94 @@ const Root = () => {
               return null;
             },
           }}
+        />
+        {/* ---- */}
+        <Stack.Screen
+          name="AddFriend"
+          component={AddFriend}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              backgroundColor: 'white',
+              // height: 60,
+            },
+            headerTitle: 'Tambah Teman',
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '100',
+            },
+            headerLeft: () => {
+              return null;
+            },
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => setOpenModal(true)}
+                style={{paddingRight: 15}}>
+                <Icon
+                  name="share"
+                  size={18}
+                  style={{transform: [{rotate: '0deg'}]}}
+                />
+                <ShareModal
+                  open={openModal}
+                  close={() => setOpenModal(false)}
+                />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        {/* ------------------- */}
+        <Stack.Screen
+          name="Friend"
+          component={Friend}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              backgroundColor: 'white',
+              // height: 60,
+            },
+            headerTitle: 'Teman',
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '100',
+            },
+            headerLeft: () => {
+              return null;
+            },
+            headerRight: () => (
+              <View style={{flexDirection: 'row'}}>
+                <GoToAddFriendFromHeader />
+                <GotoCreateGroupFromHeader />
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="CreateGroup"
+          component={CreateGroup}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              backgroundColor: 'white',
+              // height: 60,
+            },
+            headerTitle: 'Buat Grup',
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: '100',
+            },
+            headerLeft: () => {
+              return null;
+            },
+          }}
+        />
+        <Stack.Screen
+          name="PreviewProfileImage"
+          component={PreviewProfileImage}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>

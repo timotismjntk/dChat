@@ -35,6 +35,7 @@ const StartNewChat = (props) => {
         onPress={() => {
           setSelected(item.id);
         }}
+        size={17}
         color="#13a538"
       />
     </TouchableOpacity>

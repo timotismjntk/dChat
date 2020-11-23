@@ -118,6 +118,8 @@ const EnterNewPassword = (props) => {
             password.toString().length &&
               repeatPassword.toString().length >= 6 &&
               password === repeatPassword &&
+              (password.search('[0-9]') && repeatPassword.search('[0-9]')) !==
+                -1 &&
               (password.search('[a-zA-Z]') &&
                 repeatPassword.search('[a-zA-Z]')) !== -1 && {
                 backgroundColor: '#00B900',
@@ -127,6 +129,8 @@ const EnterNewPassword = (props) => {
             password.toString().length &&
             repeatPassword.toString().length >= 6 &&
             password === repeatPassword &&
+            (password.search('[0-9]') && repeatPassword.search('[0-9]')) !==
+              -1 &&
             (password.search('[a-zA-Z]') &&
               repeatPassword.search('[a-zA-Z]')) !== -1
               ? false

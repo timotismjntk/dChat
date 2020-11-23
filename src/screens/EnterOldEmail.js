@@ -16,16 +16,7 @@ const EnterOldEmail = () => {
   const [error, SetError] = useState(false);
 
   useEffect(() => {
-    if (
-      email.includes('@mail.co.id') ||
-      email.includes('@mail.com') ||
-      email.includes('@mail.c') ||
-      email.includes('@mail.co') ||
-      email.includes('@gmail.c') ||
-      email.includes('@gmail.co') ||
-      email.includes('@gmail.co.id') ||
-      email.includes('@gmail.com')
-    ) {
+    if (email.includes('@mail.') || email.includes('@gmail.')) {
       SetError(false);
       console.log('true');
     } else {
