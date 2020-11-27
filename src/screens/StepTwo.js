@@ -16,7 +16,10 @@ const StepTwo = (props) => {
   const [verification, setVerification] = useState('');
   const [error, SetError] = useState(false);
 
-  const navigateTo = () => props.navigation.navigate('StepThree');
+  const navigateTo = () =>
+    props.navigation.navigate('StepThree', {
+      phone_number: props.route.params.phone_number,
+    });
 
   return (
     <>
@@ -25,7 +28,7 @@ const StepTwo = (props) => {
         <View style={styles.wrapper}>
           <Text style={styles.info}>Kode verifikasi telah dikirim melalui</Text>
           <Text style={styles.info}>
-            SMS ke <Text>081285883084</Text>
+            SMS ke <Text>{props.route.params.phone_number}</Text>
           </Text>
         </View>
         <KeyboardAvoidingView>

@@ -12,7 +12,6 @@ import rootReducer from './reducers';
 const persistConfig = { // configuration object for redux-persist
   key: 'root',
   storage: AsyncStorage, // define which storage to use
-  whitelist: ['auth'],
   // blacklist: ['navigation', 'isLoading', 'isError'],
 };
 

@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -12,10 +13,18 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Thumbnail} from 'native-base';
 import {CheckBox} from 'react-native-btr';
 import contactList from '../API/contactList.json';
+import account from '../assets/account.jpg';
+
+// import action
+import contactAction from '../redux/actions/contact';
 
 const StartNewChat = (props) => {
   const [isSelected, setSelected] = useState(false);
-  const navigateTo = () => props.navigation.navigate('ChatDetail');
+  const [id, setId] = useState(null);
+  const navigateTo = () =>
+    props.navigation.navigate('ChatDetail', {
+      id: Number(id),
+    });
 
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
@@ -23,23 +32,45 @@ const StartNewChat = (props) => {
       onPress={() => setSelected('')}>
       <View style={styles.itemWrap}>
         <TouchableOpacity>
-          <Thumbnail small source={{uri: item.profile_image}} />
+          <Thumbnail
+            small
+            source={item.profile_image ? {uri: item.profile_image} : account}
+          />
         </TouchableOpacity>
         <View style={styles.itemDetail}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.status_message}>{item.status_message}</Text>
+          <Text style={styles.name}>{item.Friend.username}</Text>
+          {/* <Text style={styles.status_message}>{item.status_message}</Text> */}
         </View>
       </View>
       <CheckBox
-        checked={item.id === isSelected}
+        checked={item.Friend.id === isSelected}
         onPress={() => {
-          setSelected(item.id);
+          setSelected(item.Friend.id);
+          setId(item.Friend.id);
         }}
         size={17}
         color="#13a538"
       />
     </TouchableOpacity>
   );
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    dispatch(contactAction.listFriend(token));
+  }, [dispatch, token]);
+
+  const [data, setData] = useState([]);
+  const contactState = useSelector((state) => state.contact);
+  const {listContact} = contactState;
+
+  useEffect(() => {
+    if (listContact) {
+      setData(listContact.results);
+    }
+  }, [listContact]);
+
   return (
     <>
       <View style={styles.parent}>
@@ -52,7 +83,7 @@ const StartNewChat = (props) => {
         </View>
         <View style={{flex: 1}}>
           <FlatList
-            data={contactList.data}
+            data={data}
             renderItem={Item}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{

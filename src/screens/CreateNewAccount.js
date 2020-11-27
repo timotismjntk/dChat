@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
 import ImagePicker from 'react-native-image-picker';
@@ -16,11 +18,18 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import account from '../assets/account.jpg';
 
 const CreateNewAccount = (props) => {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [error, SetError] = useState(false);
   const [items, setItems] = useState('');
+  const [data, setData] = useState(new FormData());
+  const dispatch = useDispatch();
 
-  const navigateTo = () => props.navigation.navigate('EnterNewPassword');
+  const navigateTo = () =>
+    props.navigation.navigate('EnterNewPassword', {
+      data,
+      phone_number: props.route.params.phone_number,
+      username,
+    });
 
   const options = {
     title: 'Select Avatar',
@@ -30,26 +39,19 @@ const CreateNewAccount = (props) => {
     },
   };
   const createFormData = (results) => {
-    const image = new FormData();
     console.log(results);
-
-    image.append('picture', {
+    data.append('picture', {
       name: results.fileName,
       type: results.type,
       uri: results.uri,
     });
-    console.log(image._parts[0][1]);
+    console.log(data._parts[0][1]);
     if (results.fileSize > 500000) {
-      //   setMessage('image size is too large, atleast < 500 kb');
-      //   setVisible(true);
-      //   setTimeout(() => {
-      //     setVisible(false);
-      //   }, 3000);
+      Alert.alert('image size is too large, atleast < 500 kb');
     } else {
-      setItems(image._parts[0][1].uri);
-      //   dispatch(profileAction.uploadProfileImage(token, image)).catch((err) =>
-      // console.log(err.message),
-      //   );
+      setItems(data._parts[0][1].uri);
+      data.append('username', username);
+      data.append('phone_number', props.route.params.phone_number);
     }
   };
 
@@ -98,21 +100,24 @@ const CreateNewAccount = (props) => {
         <KeyboardAvoidingView>
           <TextInput
             placeholder="Nama Tampilan"
-            style={[styles.input, name.length > 0 && {borderColor: '#00B900'}]}
+            style={[
+              styles.input,
+              username.length > 0 && {borderColor: '#00B900'},
+            ]}
             onChangeText={(text) => {
-              setName(text);
+              setUsername(text);
               SetError(true);
             }}
             onFocus={() => SetError(true)}
-            value={name}
+            value={username}
           />
-          {name.length < 0 && error && (
+          {username.length < 0 && error && (
             <Text style={styles.error}>Name is required</Text>
           )}
-          {name.length > 0 && (
+          {username.length > 0 && (
             <TouchableOpacity
               style={styles.btnClear}
-              onPress={() => setName('')}>
+              onPress={() => setUsername('')}>
               <Icon name="times" size={20} color="#a5acaf" />
             </TouchableOpacity>
           )}
@@ -125,8 +130,11 @@ const CreateNewAccount = (props) => {
         }}>
         <TouchableOpacity
           onPress={navigateTo}
-          style={[styles.btn, name.length > 0 && {backgroundColor: '#00B900'}]}
-          disabled={name.length > 0 ? false : true}>
+          style={[
+            styles.btn,
+            username.length > 0 && {backgroundColor: '#00B900'},
+          ]}
+          disabled={username.length > 0 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>

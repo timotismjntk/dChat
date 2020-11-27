@@ -1,19 +1,19 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+
 import {StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {CheckBox} from 'react-native-btr';
 
-import userProfile from '../API/userProfile.json';
+// import action
+import userAction from '../redux/actions/user';
 
 const ProfileDetail = (props) => {
   const [isAllowAdd, setIsAllowAdd] = useState(false);
   const [isAllowLogin, setIsAllowLogin] = useState(false);
   const [showModalDelete, setShowModalDelete] = useState(false);
 
-  const navigateToChangePhoneNumberParent = () => {
-    props.navigation.navigate('ChangePhoneNumberParent');
-  };
   const navigateToChangePassword = () => {
     props.navigation.navigate('ChangePassword');
   };
@@ -23,7 +23,30 @@ const ProfileDetail = (props) => {
   const navigateToQRCode = () => {
     props.navigation.navigate('QRCode');
   };
+  const navigateToChangeEmail = () => {
+    props.navigation.navigate('ChangeEmail');
+  };
   const deleteAccount = () => setShowModalDelete(true);
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  const [userData, setUserData] = useState([]);
+
+  const userState = useSelector((state) => state.user);
+  const {data, isLoading, isError, isUploaded, alertMsg} = userState;
+
+  useEffect(() => {
+    if (data && !isLoading) {
+      setUserData(data.results);
+    }
+  }, [data, isLoading]);
+
+  const navigateToChangePhoneNumberParent = () => {
+    props.navigation.navigate('ChangePhoneNumberParent', {
+      phone_number: userData.phone_number,
+    });
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -33,15 +56,17 @@ const ProfileDetail = (props) => {
           style={styles.bodyWrapper}>
           <Text style={styles.titlePhone}>Nomor Telepon</Text>
           <Text style={styles.phoneNumber}>
-            {userProfile.user_profile.phone_number}
+            {userData.phone_number
+              ? userData.phone_number
+              : userData.phone_number}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bodyWrapper}>
+        <TouchableOpacity
+          style={styles.bodyWrapper}
+          onPress={navigateToChangeEmail}>
           <Text style={styles.titleMessageStatus}>Email</Text>
           <Text style={styles.email}>
-            {userProfile.user_profile.email
-              ? userProfile.user_profile.email
-              : 'Belum Diatur'}
+            {userData.email ? userData.email : 'Belum Diatur'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

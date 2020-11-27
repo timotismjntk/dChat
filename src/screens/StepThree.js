@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -13,9 +14,15 @@ import Logo from '../assets/logo.png';
 
 export default function StepThree(props) {
   const navigateToNewAccount = () =>
-    props.navigation.navigate('CreateNewAccount');
+    props.navigation.navigate('CreateNewAccount', {
+      phone_number: props.route.params.phone_number,
+    });
   const navigateToImportAccount = () =>
     props.navigation.navigate('ImportAccount');
+
+  useEffect(() => {
+    Keyboard.dismiss();
+  }, []);
 
   return (
     <View style={styles.parent}>

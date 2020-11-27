@@ -1,20 +1,19 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 
-import userProfile from '../API/userProfile.json';
-
 const ChangePhoneNumberParent = (props) => {
   const navigateToChangePhoneNumber = () => {
-    props.navigation.navigate('ChangePhoneNumber');
+    props.navigation.navigate('ChangePhoneNumber', {
+      phone_number: props.route.params.phone_number,
+    });
   };
+  console.log(props.route.params.phone_number);
   return (
     <>
       <View style={styles.container}>
         <View style={styles.parent}>
           <Text style={styles.header}>Nomor Telepon Terdaftar:</Text>
-          <Text style={styles.phone}>
-            {userProfile.user_profile.phone_number}
-          </Text>
+          <Text style={styles.phone}>{props.route.params.phone_number}</Text>
         </View>
         <View style={styles.parent}>
           <Text style={styles.textInfo}>

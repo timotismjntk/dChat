@@ -12,53 +12,48 @@ import Ionicons from 'react-native-vector-icons/EvilIcons';
 // import action
 import userAction from '../redux/actions/user';
 
-const AddName = (props) => {
-  const [name, setName] = useState(props.route.params.username);
+const ChangeEmail = (props) => {
+  const [email, setEmail] = useState('');
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const updateName = async () => {
-    await dispatch(userAction.updateProfile(token, {username: name}));
+  const updateEmail = async () => {
+    await dispatch(userAction.updateProfile(token, {email: email}));
     await dispatch(userAction.getProfile(token));
-    await props.navigation.navigate('UserProfile');
+    await props.navigation.navigate('ProfileDetail');
   };
   return (
     <>
       <View style={styles.container}>
         <TextInput
-          style={[
-            styles.input,
-            name.length > 0 && {borderColor: '#00B900', borderBottomWidth: 0.7},
-          ]}
-          maxLength={20}
-          onChangeText={(text) => setName(text)}
-          value={name}
+          style={styles.input}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
           autoFocus={true}
         />
-        {name.length > 0 && (
-          <TouchableOpacity style={styles.btnClear} onPress={() => setName('')}>
+        {email.length > 0 && (
+          <TouchableOpacity
+            style={styles.btnClear}
+            onPress={() => setEmail('')}>
             <Ionicons name="close" size={20} color="grey" />
           </TouchableOpacity>
         )}
-        <Text style={[styles.inputCount, name.length === 0 && {color: 'red'}]}>
-          {name.length}/20
-        </Text>
       </View>
       <View>
         <TouchableOpacity
           style={[
             styles.submitButton,
-            name.length > 0 && {backgroundColor: '#00B900'},
+            email.length > 0 && {backgroundColor: '#00B900'},
           ]}
-          onPress={updateName}
-          disabled={name.length > 0 ? false : true}>
-          <Text style={styles.submittext}>OK</Text>
+          onPress={updateEmail}
+          disabled={email.length > 0 ? false : true}>
+          <Text style={styles.submittext}>Submit</Text>
         </TouchableOpacity>
       </View>
     </>
   );
 };
 
-export default AddName;
+export default ChangeEmail;
 
 const styles = StyleSheet.create({
   container: {

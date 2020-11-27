@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -8,9 +9,12 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+// import action
+import authAction from '../redux/actions/auth';
 
 const EnterNewPassword = (props) => {
   const [password, setPassword] = useState('');
@@ -19,7 +23,10 @@ const EnterNewPassword = (props) => {
   const [error2, SetError2] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
 
-  const navigateTo = () => props.navigation.navigate('AutoAddFriend');
+  const dispatch = useDispatch();
+  console.log(props);
+
+  // const navigateTo = () => props.navigation.navigate('AutoAddFriend');
 
   useEffect(() => {
     if (
@@ -33,6 +40,32 @@ const EnterNewPassword = (props) => {
       }
     }
   }, [password, repeatPassword]);
+
+  const {phone_number, data} = props.route.params;
+
+  const createAccount = () => {
+    data.append('password', password);
+    dispatch(authAction.signUp(data)).catch((e) => {
+      console.log(e.message);
+    });
+  };
+
+  const {isSignup, failSignup, alertMsg} = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isSignup) {
+      props.navigation.navigate('AutoAddFriend', {
+        phone_number,
+        password,
+      });
+    }
+  }, [isSignup, phone_number, password, dispatch, props.navigation]);
+
+  useEffect(() => {
+    if (failSignup) {
+      Alert.alert(alertMsg);
+    }
+  }, [failSignup, alertMsg]);
 
   return (
     <>
@@ -112,7 +145,7 @@ const EnterNewPassword = (props) => {
           backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
-          onPress={navigateTo}
+          onPress={createAccount}
           style={[
             styles.btn,
             password.toString().length &&

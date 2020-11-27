@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Modal,
@@ -6,6 +7,7 @@ import {
   TouchableHighlight,
   Text,
   View,
+  Alert,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -15,7 +17,10 @@ import {useNavigation} from '@react-navigation/native';
 
 import account from '../assets/account.jpg';
 
-const ModalShowOtherUserPreview = (props) => {
+// import action
+import contactAction from '../redux/actions/contact';
+
+const ModalAddFriend = (props) => {
   const navigation = useNavigation();
   const {open, close, profileImage, userName} = props;
   const [modalVisible, setModalVisible] = useState(open);
@@ -23,6 +28,14 @@ const ModalShowOtherUserPreview = (props) => {
   const navigateToDetailChat = () => {
     // this come from home screen props
     props.navigation();
+    setModalVisible(close);
+  };
+  const dispatch = useDispatch();
+  const contactState = useSelector((state) => state.contact);
+  const {alertMsg} = contactState;
+  const addFriend = () => {
+    props.addFriend();
+    dispatch(contactAction.clearMessages());
     setModalVisible(close);
   };
 
@@ -34,7 +47,6 @@ const ModalShowOtherUserPreview = (props) => {
   };
 
   useEffect(() => {
-    console.log(props.navigation);
     if (open === true) {
       setModalVisible(open);
     } else if (open === false) {
@@ -62,28 +74,14 @@ const ModalShowOtherUserPreview = (props) => {
             </TouchableOpacity>
             <View style={styles.detail}>
               <Text style={styles.name}>{userName}</Text>
-              <EvilIcons name="pencil" size={25} color="grey" />
             </View>
             <View style={styles.options}>
               <TouchableOpacity
-                onPress={navigateToDetailChat}
+                onPress={addFriend}
                 style={styles.optionWrapper}>
-                <SimpleIcon name="bubble" size={20} color="black" />
-                <Text>Obrolan</Text>
+                <Icon name="user-plus" size={18} />
+                <Text>Tambah</Text>
               </TouchableOpacity>
-              <View style={styles.optionWrapper}>
-                <Icon
-                  name="phone"
-                  size={20}
-                  style={{transform: [{rotate: '100deg'}]}}
-                  color="black"
-                />
-                <Text>Panggilan Suara</Text>
-              </View>
-              <View style={styles.optionWrapper}>
-                <Icon name="video" size={20} />
-                <Text>Panggilan Video</Text>
-              </View>
             </View>
           </View>
         </TouchableHighlight>
@@ -92,7 +90,7 @@ const ModalShowOtherUserPreview = (props) => {
   );
 };
 
-export default ModalShowOtherUserPreview;
+export default ModalAddFriend;
 
 const styles = StyleSheet.create({
   modal: {
@@ -127,7 +125,7 @@ const styles = StyleSheet.create({
   options: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     borderTopWidth: 0.6,
     borderColor: 'grey',
     width: '100%',

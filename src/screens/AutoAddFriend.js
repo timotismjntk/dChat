@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -10,12 +11,28 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+// import action
+import authAction from '../redux/actions/auth';
+
 const AutoAddFriend = (props) => {
   const [selected1, setSelected1] = useState(true);
   const [selected2, setSelected2] = useState(true);
+  const dispatch = useDispatch();
 
-  const navigateTo = () => props.navigation.navigate('Home');
+  const {phone_number, password} = props.route.params;
 
+  useEffect(() => {
+    dispatch(authAction.loginNumber(phone_number, password)).catch((e) => {
+      console.log(e.message);
+    });
+  }, [dispatch, password, phone_number]);
+
+  const navigateTo = () => {
+    dispatch(authAction.clearMessageAuth());
+    setTimeout(() => {
+      props.navigation.navigate('Home');
+    }, 1800);
+  };
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>

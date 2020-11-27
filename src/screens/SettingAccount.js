@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -6,17 +7,19 @@ import {
   View,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
+import {store, persistor} from '../redux/store';
 import account from '../assets/account.jpg';
 import listFriendIcon from '../assets/listFriendIcon.png';
-import iconPengumuman from '../assets/bullhorn-outline.png';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-import userProfile from '../API/userProfile.json';
+import userAction from '../redux/actions/user';
+import {API_URL} from '@env';
 
 const SettingAccount = (props) => {
   const [items, setItems] = useState('');
@@ -28,6 +31,34 @@ const SettingAccount = (props) => {
     props.navigation.navigate('ProfileDetail');
   };
 
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    dispatch(userAction.getProfile(token));
+  }, [dispatch, token]);
+
+  const [userData, setUserData] = useState([]);
+
+  const userState = useSelector((state) => state.user);
+  const {data, isLoading, isError} = userState;
+
+  useEffect(() => {
+    if (data && !isLoading) {
+      setUserData(data.results);
+    }
+  }, [data, isLoading]);
+
+  const signOut = async () => {
+    try {
+      Alert.alert('Signout now');
+      await persistor.purge();
+      await persistor.purge();
+      await persistor.flush();
+      props.navigation.navigate('Welcome');
+    } catch (e) {}
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
@@ -35,18 +66,18 @@ const SettingAccount = (props) => {
           <Thumbnail
             large
             source={
-              userProfile.user_profile.profile_image
-                ? {uri: userProfile.user_profile.profile_image}
-                : account
+              userData ? {uri: API_URL + userData.profile_image} : account
             }
           />
           <View style={styles.upperContainer}>
-            <Text style={styles.name}>{userProfile.user_profile.name}</Text>
+            <Text style={styles.name}>{userData ? userData.username : ''}</Text>
             <View style={styles.userId}>
               <Text style={styles.Id}>ID Pengguna:</Text>
               <Text style={styles.unique_id}>
-                {userProfile.user_profile.unique_id
-                  ? userProfile.user_profile.unique_id
+                {userData
+                  ? userData.unique_id !== null
+                    ? userData.unique_id
+                    : 'Belum Diatur'
                   : 'Belum Diatur'}
               </Text>
             </View>
@@ -99,6 +130,10 @@ const SettingAccount = (props) => {
             <FontAwesome5 name="download" size={16} color="grey" />
             <Text style={styles.listItemText}>Unduh d•Chat Normal</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.listItem} onPress={signOut}>
+            <FontAwesome5 name="sign-out-alt" size={16} color="grey" />
+            <Text style={styles.listItemText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -116,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    paddingVertical: 20,
+    paddingTop: 8,
     borderBottomWidth: 0.3,
     borderColor: 'grey',
   },

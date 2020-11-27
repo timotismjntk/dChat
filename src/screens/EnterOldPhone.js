@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -8,14 +9,29 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+// import action
+import loginAction from '../redux/actions/auth';
+
 const EnterOldPhone = () => {
-  const [phone, setPhone] = useState('');
+  const [phone_number, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [error, SetError] = useState(false);
+
+  const dispatch = useDispatch();
+  const makeLogin = async () => {
+    await dispatch(loginAction.loginNumber(phone_number, password)).catch(
+      (e) => {
+        console.log(e.message);
+        Alert.alert(e.response.data.error);
+      },
+    );
+  };
 
   return (
     <>
@@ -36,26 +52,37 @@ const EnterOldPhone = () => {
             placeholder="Nomor Telepon"
             style={[
               styles.input,
-              phone.toString().length >= 6 && {borderColor: '#00B900'},
+              phone_number.toString().length >= 6 && {borderColor: '#00B900'},
             ]}
             keyboardType="phone-pad"
-            onChangeText={(number) => {
-              setPhone(number);
+            onChangeText={(text) => {
+              setPhone(text);
               SetError(true);
             }}
             onFocus={() => SetError(true)}
-            value={phone}
+            value={phone_number}
           />
-          {phone.toString().length < 6 && error && (
+          {phone_number.toString().length < 6 && error && (
             <Text style={styles.error}>Phone number is required</Text>
           )}
-          {phone.toString().length > 0 && (
+          {phone_number.toString().length > 0 && (
             <TouchableOpacity
               style={styles.btnClear}
               onPress={() => setPhone('')}>
               <Icon name="times" size={20} color="#a5acaf" />
             </TouchableOpacity>
           )}
+          <TextInput
+            placeholder="Password"
+            style={[
+              styles.input,
+              password.toString().length >= 6 && {borderColor: '#00B900'},
+            ]}
+            onChangeText={(number) => {
+              setPassword(number);
+            }}
+            value={password}
+          />
         </KeyboardAvoidingView>
       </ScrollView>
       <KeyboardAvoidingView
@@ -66,9 +93,10 @@ const EnterOldPhone = () => {
         <TouchableOpacity
           style={[
             styles.btn,
-            phone.toString().length >= 6 && {backgroundColor: '#00B900'},
+            phone_number.toString().length >= 6 && {backgroundColor: '#00B900'},
           ]}
-          disabled={phone.toString().length >= 6 ? false : true}>
+          onPress={makeLogin}
+          disabled={phone_number.toString().length >= 6 ? false : true}>
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>

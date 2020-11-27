@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -8,8 +9,20 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
 
-const AddUniqueId = () => {
-  const [uniqueId, setUniqueId] = useState('');
+// import action
+import userAction from '../redux/actions/user';
+
+const AddUniqueId = (props) => {
+  const [uniqueId, setUniqueId] = useState(
+    props.route.params.unique_id ? props.route.params.unique_id : '',
+  );
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const updateUniqueId = async () => {
+    await dispatch(userAction.updateProfile(token, {unique_id: uniqueId}));
+    await dispatch(userAction.getProfile(token));
+    await props.navigation.navigate('UserProfile');
+  };
   return (
     <>
       <View style={styles.container}>
@@ -43,6 +56,7 @@ const AddUniqueId = () => {
             styles.submitButton,
             uniqueId.length >= 4 && {backgroundColor: '#00B900'},
           ]}
+          onPress={updateUniqueId}
           disabled={uniqueId.length >= 4 ? false : true}>
           <Text style={styles.submittext}>Periksa</Text>
         </TouchableOpacity>

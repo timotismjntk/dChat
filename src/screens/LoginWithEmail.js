@@ -1,15 +1,20 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   TextInput,
   View,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
 
-const LoginWithEmail = () => {
+// import action
+import loginAction from '../redux/actions/auth';
+
+const LoginWithEmail = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, SetError] = useState(false);
@@ -35,6 +40,31 @@ const LoginWithEmail = () => {
       SetErrorEmail(true);
     }
   }, [check]);
+
+  const dispatch = useDispatch();
+  const makeLogin = async () => {
+    try {
+      await dispatch(loginAction.login(email, password));
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+  const authState = useSelector((state) => state.auth);
+  const {isLogin, isError, alertMsg, isLoading} = authState;
+
+  useEffect(() => {
+    if (isError) {
+      Alert.alert(alertMsg);
+      dispatch(loginAction.clearMessageLoginByEmail());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
+
+  useEffect(() => {
+    if (isLogin) {
+      props.navigation.navigate('Home');
+    }
+  });
 
   return (
     <>
@@ -91,6 +121,7 @@ const LoginWithEmail = () => {
             password.toString().length > 0 &&
               !error && {backgroundColor: '#0ac578'},
           ]}
+          onPress={makeLogin}
           disabled={error}>
           <Text style={styles.textSubmit}>OK</Text>
         </TouchableOpacity>

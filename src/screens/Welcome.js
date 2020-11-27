@@ -8,12 +8,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-
 import Logo from '../assets/logo.png';
 
 export default function Welcome(props) {
   const navigateToStepOne = () => props.navigation.navigate('StepOne'); // Mulai
-  const navigateToLoginWithEmail = () => {
+  const navigateToLoginWithEmail = async () => {
     props.navigation.navigate('LoginWithEmail');
   };
 

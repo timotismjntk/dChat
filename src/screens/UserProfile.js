@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
+import {StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 
 import {Thumbnail} from 'native-base';
@@ -9,21 +10,57 @@ import {CheckBox} from 'react-native-btr';
 
 import account from '../assets/account.jpg';
 
-import userProfile from '../API/userProfile.json';
+import userAction from '../redux/actions/user';
+import {set} from 'react-native-reanimated';
+
+import {API_URL} from '@env';
 
 const UserProfile = (props) => {
   const [items, setItems] = useState('');
   const [isSelected, setSelected] = useState(false);
 
-  const navigateToAddName = () => {
-    props.navigation.navigate('AddName');
-  };
   const navigateToAddStatusMessage = () => {
     props.navigation.navigate('AddStatusMessage');
   };
-  const navigateToAddUniqueId = () => {
-    props.navigation.navigate('AddUniqueId');
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  useEffect(() => {
+    dispatch(userAction.getProfile(token));
+  }, [dispatch, token]);
+
+  const [userData, setUserData] = useState([]);
+
+  const userState = useSelector((state) => state.user);
+  const {data, isLoading, isError, isUploaded, alertMsg} = userState;
+
+  const navigateToAddName = () => {
+    props.navigation.navigate('AddName', {
+      username: userData.username,
+    });
   };
+
+  const navigateToAddUniqueId = () => {
+    props.navigation.navigate('AddUniqueId', {
+      unique_id: userData.unique_id,
+    });
+  };
+
+  useEffect(() => {
+    if (data && !isLoading) {
+      setUserData(data.results);
+    }
+  }, [data, isLoading]);
+
+  useEffect(() => {
+    if (isUploaded) {
+      Alert.alert(alertMsg);
+      dispatch(userAction.getProfile(token));
+      dispatch(userAction.removeMessage());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUploaded, dispatch]);
 
   const options = {
     title: 'Select Avatar',
@@ -34,25 +71,19 @@ const UserProfile = (props) => {
   };
   const createFormData = (results) => {
     const image = new FormData();
-    console.log(results);
 
     image.append('picture', {
       name: results.fileName,
       type: results.type,
       uri: results.uri,
     });
-    console.log(image._parts[0][1]);
     if (results.fileSize > 500000) {
-      //   setMessage('image size is too large, atleast < 500 kb');
-      //   setVisible(true);
-      //   setTimeout(() => {
-      //     setVisible(false);
-      //   }, 3000);
+      Alert.alert('image size is too large, atleast < 500 kb');
     } else {
       setItems(image._parts[0][1].uri);
-      //   dispatch(profileAction.uploadProfileImage(token, image)).catch((err) =>
-      // console.log(err.message),
-      //   );
+      dispatch(userAction.uploadProfileImage(token, image)).catch((err) =>
+        console.log(err.message),
+      );
     }
   };
   return (
@@ -61,8 +92,8 @@ const UserProfile = (props) => {
         <Thumbnail
           large
           source={
-            userProfile.user_profile.profile_image
-              ? {uri: userProfile.user_profile.profile_image}
+            userData.profile_image
+              ? {uri: API_URL + userData.profile_image}
               : account
           }
         />
@@ -89,7 +120,7 @@ const UserProfile = (props) => {
         <View style={styles.upperContainer}>
           <Text style={styles.title}>Nomor Telepon</Text>
           <Text style={styles.phone}>
-            {userProfile.user_profile.phone_number}
+            {userData.phone_number ? userData.phone_number : 'Belum diatur'}
           </Text>
         </View>
       </View>
@@ -98,26 +129,21 @@ const UserProfile = (props) => {
           onPress={navigateToAddName}
           style={styles.bodyWrapper}>
           <Text style={styles.titleName}>Nama tampilan</Text>
-          <Text style={styles.name}>{userProfile.user_profile.name}</Text>
+          <Text style={styles.name}>{userData.username}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={navigateToAddStatusMessage}
           style={styles.bodyWrapper}>
           <Text style={styles.titleMessageStatus}>Pesan Status</Text>
-          <Text style={styles.status_message}>
-            {userProfile.user_profile.status_message
-              ? userProfile.user_profile.status_message
-              : 'Belum Diatur'}
-          </Text>
+          <Text style={styles.status_message}>Belum Diatur</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={navigateToAddUniqueId}
+          disabled={userData.unique_id && true}
           style={styles.bodyWrapper}>
           <Text style={styles.titleUniqueId}>ID Pengguna</Text>
           <Text style={styles.unique_id}>
-            {userProfile.user_profile.unique_id
-              ? userProfile.user_profile.unique_id
-              : 'Belum Diatur'}
+            {userData.unique_id ? userData.unique_id : 'Belum Diatur'}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -8,16 +9,44 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+// import action
+import authAction from '../redux/actions/auth';
+
 const StepOne = (props) => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
+  const dispatch = useDispatch();
 
-  const navigateTo = () => props.navigation.navigate('StepTwo');
+  const checkPhone = async () => {
+    await dispatch(authAction.checkNumber(phone)).catch((e) => {
+      console.log(e.message);
+    });
+    await dispatch(authAction.clearMessageAuth());
+    props.navigation.navigate('StepTwo', {
+      phone_number: phone,
+    });
+  };
+
+  const authState = useSelector((state) => state.auth);
+  const {isLoading, isRegistered, alertMsg} = authState;
+
+  // useEffect(() => {
+  //   if (alertMsg && !isRegistered) {
+  //     props.navigation.navigate('StepTwo', {
+  //       phone_number: phone,
+  //     });
+  //     dispatch(authAction.clearMessageAuth());
+  //   } else if (isRegistered && alertMsg.length > 0) {
+  //     Alert.alert(alertMsg);
+  //     dispatch(authAction.clearMessageAuth());
+  //   }
+  // }, [isLoading, dispatch, isRegistered, alertMsg, props.navigation, phone]);
 
   return (
     <>
@@ -73,7 +102,7 @@ const StepOne = (props) => {
           padding: 20,
         }}>
         <TouchableOpacity
-          onPress={navigateTo}
+          onPress={checkPhone}
           style={[
             styles.btn,
             phone.toString().length >= 6 &&

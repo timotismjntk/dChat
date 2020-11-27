@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -13,9 +14,20 @@ import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const ChangePhoneNumber = () => {
+// import action
+import userAction from '../redux/actions/user';
+
+const ChangePhoneNumber = (props) => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const updateNumber = async () => {
+    await dispatch(userAction.updateProfile(token, {phone_number: phone}));
+    await dispatch(userAction.getProfile(token));
+    await props.navigation.navigate('ProfileDetail');
+  };
 
   return (
     <>
@@ -25,9 +37,10 @@ const ChangePhoneNumber = () => {
           <TextInput
             autoFocus={true}
             placeholder="No. Telepon"
+            maxLenght={12}
             style={[
               styles.input,
-              phone.toString().length >= 6 && {borderColor: '#00B900'},
+              phone.toString().length >= 12 && {borderColor: '#00B900'},
             ]}
             keyboardType="phone-pad"
             onChangeText={(number) => {
@@ -37,8 +50,13 @@ const ChangePhoneNumber = () => {
             onFocus={() => SetError(true)}
             value={phone}
           />
-          {phone.toString().length < 6 && error && (
+          {phone.toString().length <= 12 && error && (
             <Text style={styles.error}>Phone number is required</Text>
+          )}
+          {phone.toString() === props.route.params.phone_number && (
+            <Text style={styles.error}>
+              Phone number cant be same with old phone number
+            </Text>
           )}
           {phone.toString().length > 0 && (
             <TouchableOpacity
@@ -67,9 +85,15 @@ const ChangePhoneNumber = () => {
         <TouchableOpacity
           style={[
             styles.btn,
-            phone.toString().length >= 6 && {backgroundColor: '#00B900'},
+            phone.toString().length === 12 && {backgroundColor: '#00B900'},
           ]}
-          disabled={phone.toString().length >= 6 ? false : true}>
+          onPress={updateNumber}
+          disabled={
+            phone !== props.route.params.phone_number &&
+            phone.toString().length === 12
+              ? false
+              : true
+          }>
           <Text style={styles.submittext}>Berikutnya</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>

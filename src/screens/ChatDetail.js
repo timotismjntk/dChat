@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -10,20 +11,24 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
+import jwt_decode from 'jwt-decode';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import {Thumbnail} from 'native-base';
+import account from '../assets/account.jpg';
 
 import detailChat from '../API/detailChat.json';
 import EmojiSelector, {Categories} from 'react-native-emoji-selector';
+// import action
+import messageAction from '../redux/actions/messages';
 
-const ChatDetail = () => {
+const ChatDetail = ({route}) => {
   const [showRightNavIconOption, setShowRightNavIconOption] = useState(false);
   const [hideDate, setHideDate] = useState(false);
   const [turnNotifications, setTurnNotifications] = useState(false);
-  const [msgInput, setMsgInput] = useState('');
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [selectEmoticon, setSelectEmoticon] = useState(false);
+  const dispatch = useDispatch();
   // to hide date after 5 min.
   setTimeout(() => {
     setHideDate(true);
@@ -43,6 +48,73 @@ const ChatDetail = () => {
     setSelectEmoticon(false);
   };
 
+  const chatId = route.params.id;
+  const token = useSelector((state) => state.auth.token);
+  const {id} = jwt_decode(token);
+  const [msgInput, setMsgInput] = useState('');
+
+  const [data, setData] = useState([]);
+  const [username, setUsername] = useState('');
+  const [date, setDate] = useState('');
+
+  useEffect(() => {
+    dispatch(messageAction.getMessageById(token, chatId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const dataMessageState = useSelector((state) => state.messages);
+  const {detailMessage, isMessageSent} = dataMessageState;
+
+  useEffect(() => {
+    if (detailMessage.results) {
+      setData(detailMessage.results.chatMessage);
+      setUsername(detailMessage.results.friendContact.username);
+      setDate(detailMessage.results.friendContact.last_active);
+    }
+  }, [detailMessage.results]);
+
+  const sendMessage = (recipient) => {
+    const dataMessage = {
+      recipient_id: recipient,
+      content: msgInput,
+    };
+    Keyboard.dismiss();
+    dispatch(messageAction.sendMessage(token, dataMessage));
+  };
+
+  const [requestLoad, setRequestLoad] = useState(false);
+  const moreMessage = () => {
+    if (detailMessage.pageInfo.nextLink) {
+      const nextPage = detailMessage.pageInfo.currentPage + 1;
+      setRequestLoad(true);
+      dispatch(messageAction.getMessageById(token, chatId, nextPage));
+    }
+  };
+  useEffect(() => {
+    // if (requestLoad) {
+    if (detailMessage.results.chatMessage) {
+      if (detailMessage.pageInfo.currentPage === 1) {
+        setData(detailMessage.results.chatMessage);
+      } else {
+        const newDataLoaded = data.concat(detailMessage.results.chatMessage);
+        setData(newDataLoaded);
+        setRequestLoad(false);
+        console.log(detailMessage.results);
+      }
+    }
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailMessage.results]);
+
+  useEffect(() => {
+    if (isMessageSent) {
+      dispatch(messageAction.getMessageById(token, chatId));
+      setTimeout(() => {
+        dispatch(messageAction.clearMessages());
+      }, 100);
+    }
+  }, [dispatch, isMessageSent, token, chatId]);
+
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
       activeOpacity={1}
@@ -51,25 +123,35 @@ const ChatDetail = () => {
         setShowBottomSheet(false);
         setSelectEmoticon(false);
       }}>
-      {item.sender_message && (
+      {item.recipient_id !== id && (
         <View style={[styles.messageWrap, {justifyContent: 'flex-end'}]}>
+          <Text style={[styles.last_sent, {paddingRight: 5}]}>
+            {moment(item.createdAt).format('hh:mm A')}
+          </Text>
           <TouchableOpacity
             style={[styles.message, {backgroundColor: '#00B900'}]}>
-            <Text style={{color: 'white'}}>{item.sender_message}</Text>
+            <Text style={{color: 'white'}}>{item.content}</Text>
           </TouchableOpacity>
         </View>
       )}
-      {item.receiver_message && (
+      {item.recipient_id === id && (
         <View style={styles.messageWrap}>
           <TouchableOpacity>
             <Thumbnail
               small
-              source={{uri: detailChat.receiver_detail.profile_image}}
+              source={
+                detailMessage.results.friendContact.profile_image
+                  ? {uri: detailMessage.results.friendContact.profile_image}
+                  : account
+              }
             />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.message, {marginLeft: 10}]}>
-            <Text>{item.receiver_message}</Text>
+            <Text>{item.content}</Text>
           </TouchableOpacity>
+          <Text style={[styles.last_sent, {paddingLeft: 5}]}>
+            {moment(item.createdAt).format('hh:mm A')}
+          </Text>
         </View>
       )}
     </TouchableOpacity>
@@ -78,10 +160,7 @@ const ChatDetail = () => {
   return (
     <>
       <View style={styles.topNav}>
-        <Text style={styles.name}>
-          {detailChat.receiver_detail.name.length >= 20 &&
-            detailChat.receiver_detail.name.slice(0, 20) + '...'}
-        </Text>
+        <Text style={styles.name}>{username.length > 0 ? username : ''}</Text>
         <View style={styles.rightNav}>
           <TouchableOpacity style={styles.rightNavIcon}>
             <Icon
@@ -100,26 +179,29 @@ const ChatDetail = () => {
           </TouchableOpacity>
         </View>
       </View>
-      {!hideDate && (
+      {!hideDate && detailMessage.results && (
         <View style={styles.date}>
-          <Text>11. 19. (Kam)</Text>
+          <Text style={{color: 'grey'}}>
+            Last seen
+            {moment(date).format(' hh:mm (D/M/Y)')}
+          </Text>
         </View>
       )}
       <View
-        // onPress={() => setShowBottomSheet(false)}
-        // activeOpacity={1}
         style={{
           padding: 15,
           paddingBottom: 0,
-          //   backgroundColor: 'red',
           flex: 1,
         }}>
         <FlatList
-          data={detailChat.data}
+          inverted
+          data={data}
           renderItem={Item}
           keyExtractor={(item) => item.id.toString()}
           //   contentContainerStyle={{paddingTop: 10}}
           showsVerticalScrollIndicator={false}
+          onEndReached={moreMessage}
+          onEndReachedThreshold={0.6}
         />
       </View>
       <View style={styles.bottomTabs}>
@@ -149,7 +231,10 @@ const ChatDetail = () => {
         />
         <TouchableOpacity
           disabled={msgInput.length > 0 ? false : true}
-          onPress={() => Alert.alert(JSON.stringify(msgInput))}>
+          onPress={() => {
+            sendMessage(detailMessage.results.friendContact.id);
+            setMsgInput('');
+          }}>
           <Icon
             name={msgInput.length > 0 ? 'telegram-plane' : 'microphone-alt'}
             size={25}
@@ -248,7 +333,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     paddingBottom: 0,
-    paddingTop: 30,
+    paddingTop: 10,
     width: '100%',
   },
   rightNav: {
@@ -292,12 +377,15 @@ const styles = StyleSheet.create({
   },
   messageWrap: {
     flexDirection: 'row',
+    alignItems: 'center',
     // flex: 1,
     // backgroundColor: 'red',
-    marginBottom: 10,
+    marginTop: 5,
+    marginBottom: 12,
   },
-  item: {
-    marginBottom: 5,
+  last_sent: {
+    color: 'grey',
+    fontSize: 11,
   },
   message: {
     backgroundColor: '#a5acaf',
