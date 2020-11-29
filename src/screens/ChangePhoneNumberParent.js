@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
+import LoadingModal from '../components/LoadingModal';
 
 const ChangePhoneNumberParent = (props) => {
   const navigateToChangePhoneNumber = () => {
@@ -10,6 +11,7 @@ const ChangePhoneNumberParent = (props) => {
   console.log(props.route.params.phone_number);
   return (
     <>
+      <LoadingModal />
       <View style={styles.container}>
         <View style={styles.parent}>
           <Text style={styles.header}>Nomor Telepon Terdaftar:</Text>

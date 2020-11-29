@@ -5,8 +5,13 @@ const initialState = {
     isError: false,
     alertMsg: '',
     updated: false,
+    isLoadingUpdate: false,
     isUploaded: false,
     isDeleted: false,
+    isLoadingReset: false,
+    isReset: false,
+    isErrorReset: false,
+    alertMsgReset: '',
   };
 
   export default (state = initialState, action) => {
@@ -102,6 +107,32 @@ const initialState = {
           updated: true,
         };
       }
+      case 'RESET_PASSWORD_PENDING': {
+        return {
+          ...state,
+          isLoadingReset: false,
+          isReset: false,
+          isErrorReset: false,
+        };
+      }
+      case 'RESET_PASSWORD_REJECTED': {
+        return {
+          ...state,
+          isLoadingReset: false,
+          isErrorReset: true,
+          isReset: false,
+          alertMsgReset: action.payload.response.data.error,
+        };
+      }
+      case 'RESET_PASSWORD_FULFILLED': {
+        return {
+          ...state,
+          isLoadingReset: false,
+          isErrorReset: true,
+          isReset: true,
+          alertMsgReset: action.payload.data.message,
+        };
+      }
       case 'REMOVE_MESSAGE': {
         return {
           ...state,
@@ -109,6 +140,10 @@ const initialState = {
           updated: false,
           alertMsg: '',
           isUploaded: false,
+          isLoadingReset: false,
+          isErrorReset: false,
+          isReset: false,
+          alertMsgReset: '',
         };
       }
       // case 'persist/PURGE': {

@@ -90,20 +90,20 @@ const initialState = {
           isMessageSent: false,
         };
       }
-      // case 'persist/PURGE': {
-      //   return {
-      //     data: {},
-      //     detailMessage: {},
-      //     isLoading: false,
-      //     isError: false,
-      //     alertMsg: '',
-      //     alertMsgById: '',
-      //     isLoadingMsgById: false,
-      //     isErrorMsgById: false,
-      //     isMessageSent: false,
-      //     alertMsgSent: '',
-      //   };
-      // }
+      case 'persist/PURGE': {
+        return {
+          data: {},
+          detailMessage: {},
+          isLoading: false,
+          isError: false,
+          alertMsg: '',
+          alertMsgById: '',
+          isLoadingMsgById: false,
+          isErrorMsgById: false,
+          isMessageSent: false,
+          alertMsgSent: '',
+        };
+      }
       default: {
         return state;
       }

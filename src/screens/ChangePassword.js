@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -9,8 +10,13 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from 'react-native';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
+// import action
+import userAction from '../redux/actions/user';
 
 const ChangePassword = (props) => {
   const [password, setPassword] = useState('');
@@ -18,6 +24,8 @@ const ChangePassword = (props) => {
   const [error, SetError] = useState(false);
   const [error2, SetError2] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (
@@ -32,8 +40,44 @@ const ChangePassword = (props) => {
     }
   }, [password, repeatPassword]);
 
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const userState = useSelector((state) => state.user);
+  const {updated, isError, alertMsg} = userState;
+
+  const updatePassword = async () => {
+    await dispatch(userAction.updateProfile(token, {password: password}));
+  };
+  useEffect(() => {
+    if (isError) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+        dispatch(userAction.removeMessage());
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
+
+  useEffect(() => {
+    if (updated) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
+      dispatch(userAction.getProfile(token));
+      props.navigation.navigate('UserProfile');
+      dispatch(userAction.removeMessage());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updated]);
+
   return (
     <>
+      <LoadingModal />
+      <AlertToasts visible={show} message={errorToast} />
       <ScrollView contentContainerStyle={styles.container}>
         <KeyboardAvoidingView>
           <TextInput
@@ -101,6 +145,7 @@ const ChangePassword = (props) => {
           backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
+          onPress={updatePassword}
           style={[
             styles.btn,
             password.toString().length &&
@@ -120,7 +165,7 @@ const ChangePassword = (props) => {
               ? false
               : true
           }>
-          <Text style={{color: 'white', fontSize: 18}}>Berikutnya</Text>
+          <Text style={{color: 'white', fontSize: 18}}>Simpan</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </>

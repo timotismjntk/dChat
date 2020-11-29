@@ -12,6 +12,9 @@ import {
 import logo from '../assets/logo.png';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Thumbnail} from 'native-base';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
+
 import account from '../assets/account.jpg';
 
 // import component
@@ -24,6 +27,8 @@ import userProfile from '../API/userProfile.json';
 
 const AddFriend = (props) => {
   const [search, setSearch] = useState('');
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
   const dispatch = useDispatch();
   const [openModalPreviewUser, setOpenModalPreviewUser] = useState(false);
@@ -36,7 +41,7 @@ const AddFriend = (props) => {
     try {
       await dispatch(contactAction.listPublicContact(token, search));
     } catch (err) {
-      Alert.alert(err.response.data.message);
+      // Alert.alert(err.response.data.message);
     }
   };
 
@@ -63,31 +68,42 @@ const AddFriend = (props) => {
 
   useEffect(() => {
     if (!isLoading && isError) {
+      setShow(true);
+      setErrorToast(alertMsg);
       setOpenModalPreviewUser(false);
       dispatch(contactAction.clearMessages());
+      setTimeout(() => {
+        setShow(false);
+      }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isError]);
 
   useEffect(() => {
-    if (Object.keys(publicContact) && publicContact.id) {
-      setId(publicContact.id);
-      console.log(publicContact);
-      setOpenModalPreviewUser(true);
-      setSendImageToComponents(
-        publicContact.profile_image && publicContact.profile_image,
-      );
-      setSendUserNameToComponents(publicContact.username);
+    if (publicContact && search.length > 0) {
+      if (publicContact.id) {
+        setId(publicContact.id);
+        setOpenModalPreviewUser(true);
+        setSendImageToComponents(
+          publicContact.profile_image && publicContact.profile_image,
+        );
+        setSendUserNameToComponents(publicContact.username);
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicContact]);
   return (
     <View style={styles.parent}>
+      <LoadingModal />
+      <AlertToasts visible={show} message={errorToast} />
       <View
         style={[
           styles.searchBar,
           search.length > 0 && {borderColor: '#00B900', borderBottomWidth: 1},
         ]}>
-        <TouchableOpacity onPress={searchContact}>
+        <TouchableOpacity
+          disabled={search.length > 0 ? false : true}
+          onPress={searchContact}>
           <Icon name="search" size={15} color="grey" />
         </TouchableOpacity>
         <TextInput

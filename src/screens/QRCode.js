@@ -1,10 +1,12 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import LoadingModal from '../components/LoadingModal';
 
 const QRCode = () => {
   return (
     <View style={styles.container}>
+      <LoadingModal />
       <View style={styles.wrapper}>
         <View style={styles.parent}>
           <Icon name="qrcode" size={150} />

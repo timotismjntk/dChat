@@ -7,15 +7,13 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import Logo from '../assets/logo.png';
+import LoadingModal from '../components/LoadingModal';
 
 export default function ImportAccount(props) {
   const navigateToEnterOldPhone = () =>
     props.navigation.navigate('EnterOldPhone');
   const navigateToEnterOldEmail = () =>
-    props.navigation.navigate('EnterOldEmail');
+    props.navigation.navigate('LoginWithEmail');
 
   return (
     <View style={styles.parent}>
@@ -37,6 +35,7 @@ export default function ImportAccount(props) {
           <Text style={styles.login}>Login Dengan Alamat Email</Text>
         </TouchableOpacity>
       </View>
+      <LoadingModal duration={1000} />
     </View>
   );
 }

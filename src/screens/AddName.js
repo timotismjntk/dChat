@@ -8,21 +8,43 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 // import action
 import userAction from '../redux/actions/user';
 
 const AddName = (props) => {
   const [name, setName] = useState(props.route.params.username);
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const updateName = async () => {
     await dispatch(userAction.updateProfile(token, {username: name}));
-    await dispatch(userAction.getProfile(token));
-    await props.navigation.navigate('UserProfile');
   };
+  const userState = useSelector((state) => state.user);
+  const {updated, isError, alertMsg, isLoading} = userState;
+
+  useEffect(() => {
+    if (updated) {
+      setErrorToast(alertMsg);
+      setShow(true);
+      setTimeout(() => {
+        setShow(false);
+        dispatch(userAction.getProfile(token));
+        props.navigation.navigate('UserProfile');
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updated]);
+
   return (
     <>
+      <LoadingModal />
+      <LoadingModal requestLoading={isLoading} />
+      <AlertToasts visible={show} message={errorToast} />
       <View style={styles.container}>
         <TextInput
           style={[

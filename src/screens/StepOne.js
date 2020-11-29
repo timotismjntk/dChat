@@ -9,8 +9,8 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Alert,
 } from 'react-native';
+import LoadingModal from '../components/LoadingModal';
 import {Picker} from 'native-base';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -22,12 +22,17 @@ const StepOne = (props) => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const checkPhone = async () => {
-    await dispatch(authAction.checkNumber(phone)).catch((e) => {
-      console.log(e.message);
-    });
+    setLoading(true);
+    try {
+      await dispatch(authAction.checkNumber(phone));
+    } catch (e) {}
     await dispatch(authAction.clearMessageAuth());
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
     props.navigation.navigate('StepTwo', {
       phone_number: phone,
     });
@@ -50,6 +55,7 @@ const StepOne = (props) => {
 
   return (
     <>
+      <LoadingModal duration={1500} />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.header}>
           Masukkan No.{'\n'}Telepon Perangkat {'\n'}Ini
@@ -106,7 +112,9 @@ const StepOne = (props) => {
           style={[
             styles.btn,
             phone.toString().length >= 6 &&
-              phone.search('[a-zA-Z]') === -1 && {backgroundColor: '#00B900'},
+              phone.search('[a-zA-Z]') === -1 && {
+                backgroundColor: '#00B900',
+              },
           ]}
           disabled={
             phone.toString().length >= 6 && phone.search('[a-zA-Z]') === -1
@@ -116,6 +124,7 @@ const StepOne = (props) => {
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
+      <LoadingModal requestLoading={loading} />
     </>
   );
 };

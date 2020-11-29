@@ -6,6 +6,7 @@ const initialState = {
   isError: false,
   isAdded: false,
   alertMsg: '',
+  isAfriend: 0,
 };
 
 export default (state = initialState, action) => {
@@ -44,7 +45,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoading: false,
         isError: true,
-        alertMsg: action.payload.response.data.error,
+        alertMsg: action.payload.response.data.message,
       };
     }
     case 'GET_LIST_PUBLIC_CONTACT_FULFILLED': {
@@ -53,6 +54,7 @@ export default (state = initialState, action) => {
         isLoading: false,
         alertMsg: action.payload.data.message,
         publicContact: action.payload.data.results,
+        isAfriend: action.payload.data.isFriend,
         isError: false,
       };
     }
@@ -115,18 +117,18 @@ export default (state = initialState, action) => {
         alertMsg: '',
       };
     }
-    // case 'persist/PURGE': {
-    //   return {
-    //     ...state,
-    //     publicContact: {},
-    //     listContactFriend: {},
-    //     detailContactFriend: {},
-    //     isLoading: false,
-    //     isError: false,
-    //     isAdded: false,
-    //     alertMsg: '',
-    //   };
-    // }
+    case 'persist/PURGE': {
+      return {
+        ...state,
+        publicContact: {},
+        listContactFriend: {},
+        detailContactFriend: {},
+        isLoading: false,
+        isError: false,
+        isAdded: false,
+        alertMsg: '',
+      };
+    }
     default: {
       return state;
     }

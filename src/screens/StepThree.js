@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
+import LoadingModal from '../components/LoadingModal';
+
 import {useNavigation} from '@react-navigation/native';
 
 import Logo from '../assets/logo.png';
@@ -45,6 +47,7 @@ export default function StepThree(props) {
           <Text style={styles.createNew}>Buat Akun baru</Text>
         </TouchableOpacity>
       </View>
+      <LoadingModal duration={1500} />
     </View>
   );
 }

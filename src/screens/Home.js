@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import LoadingModal from '../components/LoadingModal';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
 import {Thumbnail, Badge} from 'native-base';
@@ -17,6 +18,7 @@ import moment from 'moment';
 import OptionsModal from '../components/ModalShowOptions';
 import ModalShowOtherUserPreview from '../components/ModalShowOtherUserPreview';
 import {store, persistor} from '../redux/store';
+import {API_URL} from '@env';
 
 import bear from '../assets/bear.png';
 import account from '../assets/account.jpg';
@@ -32,6 +34,7 @@ const Home = (props) => {
   const [sendIdToComponents, setSendIdToComponents] = useState(null); // this for
   const dispatch = useDispatch();
   const [dataMessage, setDataMessage] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigateToChatDetail = (id) => {
     props.navigation.navigate('ChatDetail', {id: id});
@@ -40,11 +43,6 @@ const Home = (props) => {
     props.navigation.navigate('SettingAccount');
   };
   const navigateToAddFriend = async () => {
-    // try {
-    //   await persistor.purge();
-    //   await persistor.purge();
-    //   await persistor.flush();
-    // } catch (e) {}
     props.navigation.navigate('AddFriend');
   };
   const navigateToFriend = () => {
@@ -57,14 +55,23 @@ const Home = (props) => {
     dispatch(messageAction.listMessage(token)).catch((e) => {
       console.log(e.message);
     });
-  }, [dispatch, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const messageState = useSelector((state) => state.messages);
-  const {data} = messageState;
+  const {data, isLoading} = messageState;
   useEffect(() => {
     if (data) {
       setDataMessage(data.results);
     }
   }, [data]);
+
+  const refreshMessage = () => {
+    setLoading(true);
+    dispatch(messageAction.listMessage(token)).catch((e) => {
+      console.log(e.message);
+    });
+    setLoading(false);
+  };
 
   const [requestLoad, setRequestLoad] = useState(false);
   const moreMessage = () => {
@@ -104,12 +111,28 @@ const Home = (props) => {
         <TouchableOpacity
           onPress={() => {
             setOpenModalPreviewUser(true);
-            setSendImageToComponents(item.profile_image);
-            setSendUserNameToComponents(item.To.username);
+            setSendImageToComponents(
+              item.isSendByUser === 'true'
+                ? item.To.profile_image
+                : item.From.profile_image,
+            );
+            setSendUserNameToComponents(
+              item.isSendByUser === 'true'
+                ? item.To.username
+                : item.From.username,
+            );
             setSendIdToComponents(item.To.id);
           }}>
           <Thumbnail
-            source={item.profile_image ? {uri: item.profile_image} : account}
+            source={
+              item.isSendByUser === 'true'
+                ? item.To.profile_image
+                  ? {uri: API_URL + item.To.profile_image}
+                  : account
+                : item.From.profile_image
+                ? {uri: API_URL + item.From.profile_image}
+                : account
+            }
           />
         </TouchableOpacity>
         <View style={styles.itemDetail}>
@@ -145,6 +168,7 @@ const Home = (props) => {
 
   return (
     <>
+      <LoadingModal requestLoading={loading} duration={1500} />
       <View style={styles.topNav}>
         <Text style={styles.brand}>d•Chat</Text>
         <View style={styles.rightNav}>
@@ -178,6 +202,8 @@ const Home = (props) => {
             showsVerticalScrollIndicator={false}
             onEndReached={moreMessage}
             onEndReachedThreshold={0.5}
+            onRefresh={refreshMessage}
+            refreshing={isLoading}
           />
         </View>
       ) : (

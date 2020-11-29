@@ -27,6 +27,12 @@ export default {
       payload: http(token).patch('users'),
     };
   },
+  resetPassword: (data) => {
+    return {
+      type: 'RESET_PASSWORD',
+      payload: http().patch('users/reset/password', qs.stringify(data))
+    };
+  },
   removeMessage: () => {
     return {
       type: 'REMOVE_MESSAGE',

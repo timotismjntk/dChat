@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
+import LoadingModal from '../components/LoadingModal';
 
 const AddStatusMessage = () => {
   const [statusMessage, setStatusMessage] = useState('');
   return (
     <>
+      <LoadingModal />
       <View style={styles.container}>
         <TextInput
           style={[

@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import jwt_decode from 'jwt-decode';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -11,9 +12,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Thumbnail} from 'native-base';
+import LoadingModal from '../components/LoadingModal';
 import {CheckBox} from 'react-native-btr';
-import contactList from '../API/contactList.json';
 import account from '../assets/account.jpg';
+import {API_URL} from '@env';
 
 // import action
 import contactAction from '../redux/actions/contact';
@@ -26,6 +28,11 @@ const StartNewChat = (props) => {
       id: Number(id),
     });
 
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  const {id: userId} = jwt_decode(token);
+
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
       style={[styles.item, style]}
@@ -34,28 +41,43 @@ const StartNewChat = (props) => {
         <TouchableOpacity>
           <Thumbnail
             small
-            source={item.profile_image ? {uri: item.profile_image} : account}
+            source={
+              item.Friend.id !== userId
+                ? item.Friend.profile_image
+                  ? {uri: API_URL + item.Friend.profile_image}
+                  : account
+                : item.Self.profile_image
+                ? {uri: API_URL + item.Self.profile_image}
+                : account
+            }
           />
         </TouchableOpacity>
         <View style={styles.itemDetail}>
-          <Text style={styles.name}>{item.Friend.username}</Text>
+          <Text style={styles.name}>
+            {item.Friend.id !== userId
+              ? item.Friend.username
+              : item.Self.username}
+          </Text>
           {/* <Text style={styles.status_message}>{item.status_message}</Text> */}
         </View>
       </View>
       <CheckBox
-        checked={item.Friend.id === isSelected}
+        checked={
+          item.Friend.id !== userId
+            ? item.Friend.id === isSelected
+            : item.Self.id === isSelected
+        }
         onPress={() => {
-          setSelected(item.Friend.id);
-          setId(item.Friend.id);
+          setSelected(
+            item.Friend.id !== userId ? item.Friend.id : item.Self.id,
+          );
+          setId(item.Friend.id !== userId ? item.Friend.id : item.Self.id);
         }}
         size={17}
         color="#13a538"
       />
     </TouchableOpacity>
   );
-
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     dispatch(contactAction.listFriend(token));
@@ -73,6 +95,7 @@ const StartNewChat = (props) => {
 
   return (
     <>
+      <LoadingModal />
       <View style={styles.parent}>
         <View style={styles.searchBar}>
           <Icon name="search" size={12} color="grey" />

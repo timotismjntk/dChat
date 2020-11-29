@@ -2,7 +2,7 @@ import http from '../../helpers/http';
 import qs from 'query-string';
 
 export default {
-  listMessage: (token, page = 0) => ({
+  listMessage: (token, page = 1) => ({
     type: 'GET_MESSAGE',
     payload: http(token).get(`message?page=${Number(page)}`),
   }),

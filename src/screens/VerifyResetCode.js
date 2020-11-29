@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -8,30 +9,74 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
+import AlertToasts from '../components/AlertToasts';
 import LoadingModal from '../components/LoadingModal';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import authAction from '../redux/actions/auth';
 
-const StepTwo = (props) => {
+const VerifyResetCode = (props) => {
   const [verification, setVerification] = useState('');
   const [error, SetError] = useState(false);
+  const [show, setShow] = useState(false);
+  const [showVerifyError, setShowVerifyError] = useState(false);
+  const [alert, setAlert] = useState('');
+  const {reset, email} = props.route.params;
 
-  const navigateTo = () =>
-    props.navigation.navigate('StepThree', {
-      phone_number: props.route.params.phone_number,
-    });
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert(`Masukkan kode berikut: ${reset}`);
+      setShow(true);
+    }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const dispatch = useDispatch();
+
+  const authState = useSelector((state) => state.auth);
+  const {isVerify, isErrorVerify, alertMsg} = authState;
+
+  const verify = async () => {
+    Keyboard.dismiss();
+    try {
+      await dispatch(authAction.verifyResetCode(email, reset));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (isVerify) {
+      setShow(false);
+      setAlert('');
+      props.navigation.navigate('ResetPassword', {email: email});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVerify]);
+
+  useEffect(() => {
+    if (isErrorVerify) {
+      setShowVerifyError(true);
+      setTimeout(() => {
+        setShowVerifyError(false);
+        dispatch(authAction.clearMessageAuth());
+      }, 1200);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isErrorVerify]);
 
   return (
     <>
+      <AlertToasts visible={show} message={alert} />
+      <AlertToasts
+        position={200}
+        visible={showVerifyError}
+        message={alertMsg}
+      />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Masukkan Kode{'\n'}Verifikasi</Text>
-        <View style={styles.wrapper}>
-          <Text style={styles.info}>Kode verifikasi telah dikirim melalui</Text>
-          <Text style={styles.info}>
-            SMS ke <Text>{props.route.params.phone_number}</Text>
-          </Text>
-        </View>
+        <Text style={styles.header}>Masukkan Kode{'\n'}Reset</Text>
         <KeyboardAvoidingView>
           <TextInput
             placeholder="__ __ __ __ __ __"
@@ -48,12 +93,8 @@ const StepTwo = (props) => {
             value={verification}
           />
           {verification.toString().length < 6 && error && (
-            <Text style={styles.error}>Verification code is required</Text>
+            <Text style={styles.error}>Reset code is required</Text>
           )}
-          <View style={{flexDirection: 'row', marginTop: 5}}>
-            <Text style={styles.repeat}>Kirim Ulang Kode</Text>
-            <Text style={styles.repeat}>Panggil Saya</Text>
-          </View>
           {verification.toString().length > 0 && (
             <TouchableOpacity
               style={styles.btnClear}
@@ -69,7 +110,7 @@ const StepTwo = (props) => {
           padding: 20,
         }}>
         <TouchableOpacity
-          onPress={navigateTo}
+          onPress={verify}
           style={[
             styles.btn,
             verification.toString().length >= 6 && {backgroundColor: '#00B900'},
@@ -83,7 +124,7 @@ const StepTwo = (props) => {
   );
 };
 
-export default StepTwo;
+export default VerifyResetCode;
 
 const styles = StyleSheet.create({
   container: {

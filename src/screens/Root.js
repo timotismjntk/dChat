@@ -45,6 +45,9 @@ import ProfileDetail from '../screens/ProfileDetail';
 import ChangePhoneNumberParent from './ChangePhoneNumberParent';
 import ChangePhoneNumber from '../screens/ChangePhoneNumber';
 import ChangePassword from '../screens/ChangePassword';
+import ForgotPassword from '../screens/ForgotPassword';
+import ResetPassword from '../screens/ResetPassword';
+import VerifyResetCode from '../screens/VerifyResetCode';
 //
 import ChangeEmail from '../screens/ChangeEmail';
 //
@@ -120,6 +123,35 @@ const Root = (props) => {
           <Stack.Screen
             name="EnterNewPassword"
             component={EnterNewPassword}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPassword}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ResetPassword"
+            component={ResetPassword}
+            options={{
+              headerStyle: {
+                elevation: 1,
+                shadowOpacity: 0,
+                backgroundColor: 'white',
+              },
+              headerTitle: 'Reset Password',
+              headerTitleStyle: {
+                fontSize: 18,
+                fontWeight: '100',
+              },
+              headerLeft: () => {
+                return null;
+              },
+            }}
+          />
+          <Stack.Screen
+            name="VerifyResetCode"
+            component={VerifyResetCode}
             options={{headerShown: false}}
           />
           <Stack.Screen

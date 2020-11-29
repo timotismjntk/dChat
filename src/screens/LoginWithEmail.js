@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 // import action
 import loginAction from '../redux/actions/auth';
@@ -19,6 +21,9 @@ const LoginWithEmail = (props) => {
   const [password, setPassword] = useState('');
   const [error, SetError] = useState(false);
   const [errorEmail, SetErrorEmail] = useState(false);
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
+
   const check =
     email.includes('@mail.') ||
     email.includes('@gmail.') ||
@@ -41,6 +46,7 @@ const LoginWithEmail = (props) => {
     }
   }, [check]);
 
+  / * -------------------------------------- */;
   const dispatch = useDispatch();
   const makeLogin = async () => {
     try {
@@ -49,12 +55,21 @@ const LoginWithEmail = (props) => {
       console.log(e.message);
     }
   };
+
+  const navigateToForgotPassword = () => {
+    props.navigation.navigate('ForgotPassword');
+  };
+
   const authState = useSelector((state) => state.auth);
   const {isLogin, isError, alertMsg, isLoading} = authState;
 
   useEffect(() => {
     if (isError) {
-      Alert.alert(alertMsg);
+      setErrorToast(alertMsg);
+      setShow(true);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
       dispatch(loginAction.clearMessageLoginByEmail());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,12 +77,23 @@ const LoginWithEmail = (props) => {
 
   useEffect(() => {
     if (isLogin) {
-      props.navigation.navigate('Home');
+      setErrorToast(alertMsg);
+      setShow(true);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
+      setTimeout(() => {
+        props.navigation.navigate('Home');
+      }, 2000);
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
+      <LoadingModal />
+      <LoadingModal requestLoading={isLoading} />
+      <AlertToasts visible={show} message={errorToast} />
       <View style={styles.container}>
         <TextInput
           style={[
@@ -108,7 +134,9 @@ const LoginWithEmail = (props) => {
             <Ionicons name="close" size={24} color="grey" />
           </TouchableOpacity>
         )}
-        <Text style={styles.link}>Lupa kata sandi ?</Text>
+        <TouchableOpacity onPress={navigateToForgotPassword}>
+          <Text style={styles.link}>Lupa kata sandi ?</Text>
+        </TouchableOpacity>
         <View style={styles.QRCode}>
           <Icon name="qrcode" size={20} />
           <Text style={styles.qrText}>Login dengan kode QR</Text>

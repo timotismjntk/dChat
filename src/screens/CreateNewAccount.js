@@ -16,12 +16,16 @@ import {Thumbnail} from 'native-base';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import account from '../assets/account.jpg';
+import AlertToasts from '../components/AlertToasts';
 
 const CreateNewAccount = (props) => {
   const [username, setUsername] = useState('');
   const [error, SetError] = useState(false);
   const [items, setItems] = useState('');
   const [data, setData] = useState(new FormData());
+  const [alertMessage, setAlertMessage] = useState('');
+  const [show, setShow] = useState(false);
+
   const dispatch = useDispatch();
 
   const navigateTo = () =>
@@ -47,7 +51,11 @@ const CreateNewAccount = (props) => {
     });
     console.log(data._parts[0][1]);
     if (results.fileSize > 500000) {
-      Alert.alert('image size is too large, atleast < 500 kb');
+      setShow(true);
+      setAlertMessage('image size is too large, atleast < 500 kb');
+      setTimeout(() => {
+        setShow(false);
+      }, 800);
     } else {
       setItems(data._parts[0][1].uri);
       data.append('username', username);
@@ -138,6 +146,7 @@ const CreateNewAccount = (props) => {
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
+      <AlertToasts visible={alertMessage} message={show} />
     </>
   );
 };

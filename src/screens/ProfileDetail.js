@@ -5,6 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {CheckBox} from 'react-native-btr';
+import LoadingModal from '../components/LoadingModal';
 
 // import action
 import userAction from '../redux/actions/user';
@@ -50,6 +51,7 @@ const ProfileDetail = (props) => {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <LoadingModal duration={2000} />
       <View style={{paddingLeft: 15}}>
         <TouchableOpacity
           onPress={navigateToChangePhoneNumberParent}

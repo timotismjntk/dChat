@@ -12,6 +12,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import {useNavigation} from '@react-navigation/native';
+import {API_URL} from '@env';
 
 import account from '../assets/account.jpg';
 
@@ -57,7 +58,7 @@ const ModalShowOtherUserPreview = (props) => {
             <TouchableOpacity onPress={navigateToPreviewProfileImage}>
               <Thumbnail
                 large
-                source={profileImage ? {uri: profileImage} : account}
+                source={profileImage ? {uri: API_URL + profileImage} : account}
               />
             </TouchableOpacity>
             <View style={styles.detail}>

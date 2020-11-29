@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   StyleSheet,
   Text,
@@ -6,11 +7,19 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import AlertToasts from '../components/AlertToasts';
+import LoadingModal from '../components/LoadingModal';
 
-const ForgotPassword = () => {
+// import action
+import loginAction from '../redux/actions/auth';
+
+const ForgotPassword = (props) => {
   const [email, setEmail] = useState('');
   const [error, SetError] = useState(false);
+  const dispatch = useDispatch();
+  const [alertMessage, setAlertMessage] = useState('');
+  const [show, setShow] = useState(false);
+  const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     if (
@@ -26,8 +35,53 @@ const ForgotPassword = () => {
     }
   }, [email]);
 
+  const sendResetCode = async () => {
+    try {
+      await dispatch(loginAction.getResetCode(email));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+  const authState = useSelector((state) => state.auth);
+  const {
+    resetCodeData,
+    isMatch,
+    isErrorResetCode,
+    alertMsg,
+    isLoading,
+  } = authState;
+
+  useEffect(() => {
+    if (isMatch) {
+      props.navigation.navigate('VerifyResetCode', {
+        reset: resetCodeData,
+        email: email,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMatch]);
+
+  useEffect(() => {
+    if (isErrorResetCode && !isLoading) {
+      if (!isLoading) {
+        setTimeout(() => {
+          setAlertMessage(alertMsg);
+          setShow(true);
+        }, 1500);
+        setTimeout(() => {
+          setAlertMessage('');
+          setShow(false);
+          dispatch(loginAction.clearMessageAuth());
+        }, 3500);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isErrorResetCode, isLoading]);
+
   return (
     <>
+      <LoadingModal requestLoading={isLoading} duration={duration} />
+      <AlertToasts visible={show} message={alertMessage} />
       <View style={styles.container}>
         <Text style={styles.title}>Lupa kata sandi?</Text>
         <Text style={styles.subTitle}>
@@ -44,6 +98,7 @@ const ForgotPassword = () => {
       </View>
       <View style={styles.bottom}>
         <TouchableOpacity
+          onPress={sendResetCode}
           style={[styles.btnSubmit, !error && {backgroundColor: '#0ac578'}]}
           disabled={error}>
           <Text style={styles.textSubmit}>OK</Text>

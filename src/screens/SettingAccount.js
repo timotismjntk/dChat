@@ -17,12 +17,16 @@ import Feather from 'react-native-vector-icons/Feather';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 import userAction from '../redux/actions/user';
 import {API_URL} from '@env';
 
 const SettingAccount = (props) => {
   const [items, setItems] = useState('');
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
 
   const navigateToUserProfile = () => {
     props.navigation.navigate('UserProfile');
@@ -30,13 +34,20 @@ const SettingAccount = (props) => {
   const navigateToAccount = () => {
     props.navigation.navigate('ProfileDetail');
   };
+  const navigateToListFriend = () => {
+    props.navigation.navigate('Friend');
+  };
+  const navigateToStartNewChat = () => {
+    props.navigation.navigate('StartNewChat');
+  };
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     dispatch(userAction.getProfile(token));
-  }, [dispatch, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [userData, setUserData] = useState([]);
 
@@ -44,23 +55,38 @@ const SettingAccount = (props) => {
   const {data, isLoading, isError} = userState;
 
   useEffect(() => {
-    if (data && !isLoading) {
+    if (data.results && !isLoading) {
       setUserData(data.results);
     }
-  }, [data, isLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.results]);
+
+  const [signoutLoading, setSignoutLoading] = useState(false);
 
   const signOut = async () => {
+    setTimeout(() => {
+      setSignoutLoading(true);
+    }, 1000);
     try {
-      Alert.alert('Signout now');
-      await persistor.purge();
-      await persistor.purge();
-      await persistor.flush();
-      props.navigation.navigate('Welcome');
+      setSignoutLoading(false);
+      setErrorToast('Signout now');
+      setShow(true);
+      setTimeout(async () => {
+        setShow(false);
+        await persistor.purge();
+        await persistor.purge();
+        await persistor.flush();
+        props.navigation.navigate('Welcome');
+      }, 2000);
     } catch (e) {}
   };
 
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <LoadingModal duration={2000} />
+      <LoadingModal requestLoading={signoutLoading} />
+      <AlertToasts visible={show} message={errorToast} />
       <View>
         <TouchableOpacity style={styles.header} onPress={navigateToUserProfile}>
           <Thumbnail
@@ -98,7 +124,9 @@ const SettingAccount = (props) => {
             <SimpleIcon name="volume-2" size={16} />
             <Text style={styles.listItemText}>Pemberitahuan</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={navigateToStartNewChat}>
             <SimpleIcon name="bubbles" size={16} />
             <Text style={styles.listItemText}>Obrolan</Text>
           </TouchableOpacity>
@@ -106,7 +134,9 @@ const SettingAccount = (props) => {
             <SimpleIcon name="phone" size={16} />
             <Text style={styles.listItemText}>Panggilan</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={navigateToListFriend}>
             <Image source={listFriendIcon} style={{width: 16}} />
             <Text style={styles.listItemText}>Teman</Text>
           </TouchableOpacity>

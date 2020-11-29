@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 // import action
 import userAction from '../redux/actions/user';
@@ -16,15 +18,49 @@ const AddUniqueId = (props) => {
   const [uniqueId, setUniqueId] = useState(
     props.route.params.unique_id ? props.route.params.unique_id : '',
   );
+
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const userState = useSelector((state) => state.user);
+  const {updated, isError, alertMsg} = userState;
+
   const updateUniqueId = async () => {
     await dispatch(userAction.updateProfile(token, {unique_id: uniqueId}));
-    await dispatch(userAction.getProfile(token));
-    await props.navigation.navigate('UserProfile');
   };
+
+  useEffect(() => {
+    if (isError) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+        dispatch(userAction.removeMessage());
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
+
+  useEffect(() => {
+    if (updated) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
+      dispatch(userAction.getProfile(token));
+      props.navigation.navigate('UserProfile');
+      dispatch(userAction.removeMessage());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updated]);
+
   return (
     <>
+      <LoadingModal />
+      <AlertToasts visible={show} message={errorToast} />
       <View style={styles.container}>
         <TextInput
           style={[

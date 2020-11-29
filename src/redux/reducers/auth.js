@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable prettier/prettier */
 const initialState = {
   isLogin: false,
@@ -13,6 +12,9 @@ const initialState = {
   token: '',
   alertMsg: '',
   alertMsgLoginNumber: '',
+  resetCodeData: {},
+  isVerify: false,
+  isErrorVerify: false,
 };
 
 export default (state = initialState, action) => {
@@ -52,7 +54,6 @@ export default (state = initialState, action) => {
     case 'AUTH_USER_NUMBER_REJECTED': {
       return {
         ...state,
-        isLoading: false,
         isErrorNumber: true,
         alertMsgLoginNumber: action.payload.response.data.error,
       };
@@ -115,6 +116,54 @@ export default (state = initialState, action) => {
         alertMsg: action.payload.data.message,
       };
     }
+    case 'GET_RESET_CODE_PENDING': {
+      return {
+        ...state,
+        isLoading: true,
+        alertMsg: '',
+      };
+    }
+    case 'GET_RESET_CODE_REJECTED': {
+      return {
+        ...state,
+        isMatch: false,
+        isLoading: false,
+        isErrorResetCode: true,
+        alertMsg: action.payload.response.data.message,
+      };
+    }
+    case 'GET_RESET_CODE_FULFILLED': {
+      return {
+        ...state,
+        isMatch: true,
+        isLoading: false,
+        isVerify: false,
+        resetCodeData: action.payload.data.result,
+      };
+    }
+    case 'VERIFY_RESET_CODE_PENDING': {
+      return {
+        ...state,
+        isVerify: false,
+        isErrorVerify: false,
+      };
+    }
+    case 'VERIFY_RESET_CODE_REJECTED': {
+      return {
+        ...state,
+        isVerify: false,
+        isErrorVerify: true,
+        alertMsg: action.payload.response.data.message,
+      };
+    }
+    case 'VERIFY_RESET_CODE_FULFILLED': {
+      return {
+        ...state,
+        isVerify: true,
+        isErrorVerify: false,
+        resetCodeData: action.payload.data.result,
+      };
+    }
     case 'persist/PURGE': {
       return {
         ...state,
@@ -159,9 +208,16 @@ export default (state = initialState, action) => {
         ...state,
         alertMsg: '',
         isError: false,
+        isErrorNumber: false,
         isSignup: false,
         failSignup: false,
         isRegistered: false,
+        isLoading: false,
+        isLoadingNumber: false,
+        isMatch: false,
+        isErrorResetCode: false,
+        resetCodeData: {},
+        isErrorVerify: false,
       };
     }
     case 'CLEAR_MESSAGE_AUTH_EMAIL': {
@@ -169,6 +225,8 @@ export default (state = initialState, action) => {
         ...state,
         alertMsg: '',
         isError: false,
+        isLoading: false,
+        isLoadingNumber: false,
       };
     }
     default: {

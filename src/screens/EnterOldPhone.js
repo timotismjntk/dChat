@@ -12,6 +12,8 @@ import {
   Alert,
 } from 'react-native';
 import {Picker} from 'native-base';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -22,16 +24,50 @@ const EnterOldPhone = () => {
   const [phone_number, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, SetError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [show, setShow] = useState(false);
+
+  const loginState = useSelector((state) => state.auth);
+  const {isLoading, alertMsgLoginNumber, isErrorNumber} = loginState;
 
   const dispatch = useDispatch();
   const makeLogin = async () => {
-    await dispatch(loginAction.loginNumber(phone_number, password)).catch(
-      (e) => {
-        console.log(e.message);
-        Alert.alert(e.response.data.error);
-      },
-    );
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    try {
+      await dispatch(loginAction.loginNumber(phone_number, password));
+    } catch (err) {}
   };
+
+  useEffect(() => {
+    if (isLoading) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isErrorNumber) {
+      setAlertMessage(alertMsgLoginNumber);
+      setShow(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isErrorNumber]);
+
+  useEffect(() => {
+    if (show) {
+      setTimeout(() => {
+        setShow(false);
+        dispatch(loginAction.clearMessageAuth());
+      }, 1000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
 
   return (
     <>
@@ -100,6 +136,8 @@ const EnterOldPhone = () => {
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
+      <LoadingModal requestLoading={loading} />
+      <AlertToasts visible={show} message={alertMessage} />
     </>
   );
 };

@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import LoadingModal from '../components/LoadingModal';
 
 import {Thumbnail} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -88,6 +89,7 @@ const UserProfile = (props) => {
   };
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
+      <LoadingModal duration={2000} />
       <View style={styles.header}>
         <Thumbnail
           large

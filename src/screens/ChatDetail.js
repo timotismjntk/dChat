@@ -15,6 +15,7 @@ import jwt_decode from 'jwt-decode';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import {Thumbnail} from 'native-base';
+import LoadingModal from '../components/LoadingModal';
 import account from '../assets/account.jpg';
 
 import detailChat from '../API/detailChat.json';
@@ -63,15 +64,24 @@ const ChatDetail = ({route}) => {
   }, []);
 
   const dataMessageState = useSelector((state) => state.messages);
-  const {detailMessage, isMessageSent} = dataMessageState;
+  const {detailMessage, isMessageSent, isLoading} = dataMessageState;
+  useEffect(() => {
+    if (detailMessage.results) {
+      setUsername(detailMessage.results.friendContact.username);
+      setDate(detailMessage.results.friendContact.last_active);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailMessage.results]);
 
   useEffect(() => {
     if (detailMessage.results) {
       setData(detailMessage.results.chatMessage);
-      setUsername(detailMessage.results.friendContact.username);
-      setDate(detailMessage.results.friendContact.last_active);
     }
   }, [detailMessage.results]);
+
+  const refreshMessage = () => {
+    dispatch(messageAction.getMessageById(token, chatId));
+  };
 
   const sendMessage = (recipient) => {
     const dataMessage = {
@@ -91,18 +101,18 @@ const ChatDetail = ({route}) => {
     }
   };
   useEffect(() => {
-    // if (requestLoad) {
-    if (detailMessage.results.chatMessage) {
-      if (detailMessage.pageInfo.currentPage === 1) {
-        setData(detailMessage.results.chatMessage);
-      } else {
-        const newDataLoaded = data.concat(detailMessage.results.chatMessage);
-        setData(newDataLoaded);
-        setRequestLoad(false);
-        console.log(detailMessage.results);
+    if (!isLoading) {
+      if (detailMessage.results) {
+        if (detailMessage.pageInfo.currentPage === 1) {
+          setData(detailMessage.results.chatMessage);
+        } else {
+          const newDataLoaded = data.concat(detailMessage.results.chatMessage);
+          setData(newDataLoaded);
+          setRequestLoad(false);
+          console.log(detailMessage.results);
+        }
       }
     }
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailMessage.results]);
 
@@ -113,7 +123,8 @@ const ChatDetail = ({route}) => {
         dispatch(messageAction.clearMessages());
       }, 100);
     }
-  }, [dispatch, isMessageSent, token, chatId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMessageSent, chatId]);
 
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
@@ -159,6 +170,7 @@ const ChatDetail = ({route}) => {
 
   return (
     <>
+      <LoadingModal />
       <View style={styles.topNav}>
         <Text style={styles.name}>{username.length > 0 ? username : ''}</Text>
         <View style={styles.rightNav}>
@@ -197,6 +209,8 @@ const ChatDetail = ({route}) => {
           inverted
           data={data}
           renderItem={Item}
+          refreshing={isLoading}
+          onRefresh={refreshMessage}
           keyExtractor={(item) => item.id.toString()}
           //   contentContainerStyle={{paddingTop: 10}}
           showsVerticalScrollIndicator={false}

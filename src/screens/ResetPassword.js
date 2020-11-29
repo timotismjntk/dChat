@@ -9,30 +9,30 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Alert,
 } from 'react-native';
+import LoadingModal from '../components/LoadingModal';
 import AlertToasts from '../components/AlertToasts';
 
-import Icon from 'react-native-vector-icons/FontAwesome5';
 // import action
-import authAction from '../redux/actions/auth';
+import userAction from '../redux/actions/user';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const EnterNewPassword = (props) => {
+const ResetPassword = (props) => {
+  const [oldPassword, setOldPassword] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [error, SetError] = useState(false);
   const [error2, SetError2] = useState(false);
+  const [error3, SetError3] = useState(false);
   const [isMatch, setIsMatch] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  const {email} = props.route.params;
+  const [errorToast, setErrorToast] = useState('');
   const [show, setShow] = useState(false);
-
   const dispatch = useDispatch();
-  console.log(props);
-
-  // const navigateTo = () => props.navigation.navigate('AutoAddFriend');
 
   useEffect(() => {
     if (
+      oldPassword.toString().length > 0 &&
       password.toString().length >= 6 &&
       repeatPassword.toString().length >= 6
     ) {
@@ -42,72 +42,103 @@ const EnterNewPassword = (props) => {
         setIsMatch(false);
       }
     }
-  }, [password, repeatPassword]);
+  }, [oldPassword, password, repeatPassword]);
 
-  const {phone_number, data} = props.route.params;
-
-  const createAccount = async () => {
-    data.append('password', password);
+  const resetPassword = async () => {
+    const data = {
+      email,
+      oldPassword,
+      newPassword: password,
+    };
     try {
-      await dispatch(authAction.signUp(data));
+      await dispatch(userAction.resetPassword(data));
     } catch (e) {
       console.log(e.message);
     }
   };
 
-  const {isSignup, failSignup, alertMsg} = useSelector((state) => state.auth);
+  const userState = useSelector((state) => state.user);
+  const {alertMsgReset, isReset, isLoadingReset, isErrorReset} = userState;
 
   useEffect(() => {
-    if (isSignup) {
-      props.navigation.navigate('AutoAddFriend', {
-        phone_number,
-        password,
-      });
-    }
-  }, [isSignup, phone_number, password, dispatch, props.navigation]);
-
-  useEffect(() => {
-    if (failSignup) {
+    if (isErrorReset && !isLoadingReset) {
       setShow(true);
-      setAlertMessage(alertMsg);
+      setErrorToast(alertMsgReset);
+      dispatch(userAction.removeMessage());
       setTimeout(() => {
         setShow(false);
-      }, 500);
+      }, 3000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [failSignup]);
+  }, [isErrorReset]);
+
+  useEffect(() => {
+    if (isReset) {
+      setTimeout(() => {
+        props.navigation.navigate('Welcome');
+        dispatch(userAction.removeMessage());
+      }, 2000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReset]);
 
   return (
     <>
+      <LoadingModal />
+      <LoadingModal requestLoading={isLoadingReset} />
+      <AlertToasts visible={show} message={errorToast} />
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Buat Kata Sandi</Text>
-        <View style={styles.wrapper}>
-          <Text style={styles.info}>
-            Password minimal sama dengan 6 karakter.{'\n'}
-            Gunakan setidaknya satu huruf, satu{'\n'}
-            angka, dan empat karakter lainnya
-          </Text>
+        <View>
+          <Text>Panjang karakter kata sandi tidak kurang dari 6 karakter.</Text>
+          <Text>Setidaknya Kata sandi baru berisi satu huruf dan angka.</Text>
         </View>
+        <KeyboardAvoidingView style={styles.parent}>
+          <TextInput
+            autoFocus={true}
+            placeholder="Masukkan Kata Sandi Lama"
+            style={[
+              styles.input,
+              password.toString().length > 0 && {borderColor: '#00B900'},
+            ]}
+            onChangeText={(number) => {
+              setOldPassword(number);
+              SetError(true);
+            }}
+            onFocus={() => SetError(true)}
+            value={oldPassword}
+            secureTextEntry={true}
+          />
+          {oldPassword.toString().length < 6 && error && (
+            <Text style={styles.error}>Old password is required</Text>
+          )}
+          {oldPassword.toString().length > 0 && (
+            <TouchableOpacity
+              style={styles.btnClear}
+              onPress={() => setOldPassword('')}>
+              <Icon name="times" size={20} color="#a5acaf" />
+            </TouchableOpacity>
+          )}
+        </KeyboardAvoidingView>
         <KeyboardAvoidingView>
           <TextInput
-            placeholder="Masukkan Kata Sandi"
+            placeholder="Kata Sandi (6 s/d 20 kar.)"
             style={[
               styles.input,
               password.toString().length >= 6 && {borderColor: '#00B900'},
             ]}
             onChangeText={(number) => {
               setPassword(number);
-              SetError(true);
+              SetError2(true);
             }}
-            onFocus={() => SetError(true)}
+            onFocus={() => SetError2(true)}
             value={password}
             secureTextEntry={true}
           />
-          {password.toString().length < 6 && error && (
-            <Text style={styles.error}>password is required</Text>
+          {password.toString().length < 6 && error2 && (
+            <Text style={styles.error2}>password is required</Text>
           )}
           {isMatch && password.length > 0 && (
-            <Text style={styles.error}>password doesnt match</Text>
+            <Text style={styles.error2}>password doesnt match</Text>
           )}
           {password.toString().length > 0 && (
             <TouchableOpacity
@@ -119,24 +150,24 @@ const EnterNewPassword = (props) => {
         </KeyboardAvoidingView>
         <KeyboardAvoidingView>
           <TextInput
-            placeholder="Masukkan Sekali lagi"
+            placeholder="Konfirmasi ulang kata sandi"
             style={[
               styles.input,
               repeatPassword.toString().length >= 6 && {borderColor: '#00B900'},
             ]}
             onChangeText={(number) => {
               setRepeatPassword(number);
-              SetError(true);
+              SetError3(true);
             }}
-            onFocus={() => SetError2(true)}
+            onFocus={() => SetError3(true)}
             value={repeatPassword}
             secureTextEntry={true}
           />
-          {repeatPassword.toString().length < 6 && error2 && (
-            <Text style={styles.error}>Repeat password is required</Text>
+          {repeatPassword.toString().length < 6 && error3 && (
+            <Text style={styles.error3}>Repeat password is required</Text>
           )}
           {isMatch && repeatPassword.length > 1 && (
-            <Text style={styles.error}>repeat password doesnt match</Text>
+            <Text style={styles.error3}>repeat password doesnt match</Text>
           )}
           {repeatPassword.toString().length > 0 && (
             <TouchableOpacity
@@ -149,53 +180,49 @@ const EnterNewPassword = (props) => {
       </ScrollView>
       <KeyboardAvoidingView
         style={{
-          alignItems: 'flex-end',
-          padding: 20,
           paddingTop: 0,
           backgroundColor: 'transparent',
         }}>
         <TouchableOpacity
-          onPress={createAccount}
+          onPress={resetPassword}
           style={[
             styles.btn,
             password.toString().length &&
               repeatPassword.toString().length >= 6 &&
               password === repeatPassword &&
-              (password.search('[0-9]') && repeatPassword.search('[0-9]')) !==
-                -1 &&
               (password.search('[a-zA-Z]') &&
                 repeatPassword.search('[a-zA-Z]')) !== -1 && {
                 backgroundColor: '#00B900',
               },
           ]}
           disabled={
+            oldPassword.toString().length &&
             password.toString().length &&
             repeatPassword.toString().length >= 6 &&
             password === repeatPassword &&
-            (password.search('[0-9]') && repeatPassword.search('[0-9]')) !==
-              -1 &&
             (password.search('[a-zA-Z]') &&
               repeatPassword.search('[a-zA-Z]')) !== -1
               ? false
               : true
           }>
-          <Icon name="arrow-right" size={20} color="white" />
+          <Text style={{color: 'white', fontSize: 18}}>Berikutnya</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <AlertToasts visible={alertMessage} message={show} />
     </>
   );
 };
 
-export default EnterNewPassword;
+export default ResetPassword;
 
 const styles = StyleSheet.create({
   container: {
     padding: 25,
-    paddingTop: 55,
+    // paddingTop: 55,
+    backgroundColor: 'white',
+    // flex: 1,
   },
-  header: {
-    fontSize: 28,
+  parent: {
+    marginTop: 10,
   },
   wrapper: {
     marginTop: 15,
@@ -212,19 +239,18 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     // backgroundColor: 'red',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.6,
     borderColor: '#a5acaf',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '100',
     marginBottom: 5,
   },
   btn: {
     backgroundColor: '#a5acaf',
-    width: 50,
-    height: 50,
+    // width: 50,
+    height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 30,
   },
   btnClear: {
     position: 'absolute',

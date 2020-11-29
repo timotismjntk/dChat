@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
+import jwt_decode from 'jwt-decode';
 import {
   StyleSheet,
   Text,
@@ -10,11 +12,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
+import LoadingModal from '../components/LoadingModal';
 import account from '../assets/account.jpg';
+import {API_URL} from '@env';
 
 import {Thumbnail} from 'native-base';
 
-import userProfile from '../API/userProfile.json';
 // import action
 import contactAction from '../redux/actions/contact';
 
@@ -31,42 +34,67 @@ const Friend = (props) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
 
+  const {id: userId} = jwt_decode(token);
+
   const searchFriend = () => {
     dispatch(contactAction.listFriend(token, search));
   };
 
   useEffect(() => {
     dispatch(contactAction.listFriend(token));
-  }, [dispatch, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [data, setData] = useState([]);
   const contactState = useSelector((state) => state.contact);
   const {listContact} = contactState;
 
   useEffect(() => {
-    setTotalFriend(listContact.results.length);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     if (listContact) {
+      setTotalFriend(listContact.results.length);
       setData(listContact.results);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listContact]);
 
-  const Item = ({item, onPress, style}) => (
-    <TouchableOpacity
-      style={styles.friendContact}
-      onPress={() => navigateTo(item.Friend.id)}>
-      <Thumbnail small source={account} />
-      <Text style={styles.friendContact_Account_name}>
-        {item.Friend.username}
-      </Text>
-    </TouchableOpacity>
-  );
+  const Item = ({item, onPress, style}) =>
+    item.Friend.id !== userId ? (
+      <TouchableOpacity
+        style={styles.friendContact}
+        onPress={() => navigateTo(item.Friend.id)}>
+        <Thumbnail
+          small
+          source={
+            item.Friend.profile_image
+              ? {uri: API_URL + item.Friend.profile_image}
+              : account
+          }
+        />
+        <Text style={styles.friendContact_Account_name}>
+          {item.Friend.username}
+        </Text>
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity
+        style={styles.friendContact}
+        onPress={() => navigateTo(item.Self.id)}>
+        <Thumbnail
+          small
+          source={
+            item.Self.profile_image
+              ? {uri: API_URL + item.Self.profile_image}
+              : account
+          }
+        />
+        <Text style={styles.friendContact_Account_name}>
+          {item.Self.username}
+        </Text>
+      </TouchableOpacity>
+    );
 
   return (
     <View style={styles.parent}>
+      <LoadingModal />
       <View
         style={[
           styles.searchBar,
@@ -141,7 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   searchInput: {
-    // flex: 1,
+    flex: 1,
     height: 40,
     fontStyle: 'italic',
     paddingLeft: 8,

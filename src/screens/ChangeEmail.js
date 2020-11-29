@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
+import LoadingModal from '../components/LoadingModal';
 
 // import action
 import userAction from '../redux/actions/user';
@@ -23,6 +24,7 @@ const ChangeEmail = (props) => {
   };
   return (
     <>
+      <LoadingModal />
       <View style={styles.container}>
         <TextInput
           style={styles.input}

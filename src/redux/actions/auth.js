@@ -19,10 +19,18 @@ export default {
   loginNumber: (phone, password) => ({
     type: 'AUTH_USER_NUMBER',
     payload: http().post('auth/login/phone', qs.stringify({phone_number: phone, password: password})),
-  }), 
+  }),
   checkNumber: (phone) => ({
     type: 'CHECK_NUMBER',
     payload: http().post('auth/check', qs.stringify({phone_number: phone})),
+  }),
+  getResetCode: (email) => ({
+    type: 'GET_RESET_CODE',
+    payload: http().post('auth/reset', qs.stringify({email})),
+  }),
+  verifyResetCode: (email, reset_code) => ({
+    type: 'VERIFY_RESET_CODE',
+    payload: http().post('auth/verify/reset', qs.stringify({email, reset_code})),
   }),
   logout: () => ({
     type: 'LOGOUT_USER',

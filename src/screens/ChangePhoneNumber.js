@@ -11,6 +11,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {Picker} from 'native-base';
+import LoadingModal from '../components/LoadingModal';
+import AlertToasts from '../components/AlertToasts';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -20,17 +22,47 @@ import userAction from '../redux/actions/user';
 const ChangePhoneNumber = (props) => {
   const [phone, setPhone] = useState('');
   const [error, SetError] = useState(false);
+  const [errorToast, setErrorToast] = useState('');
+  const [show, setShow] = useState(false);
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const userState = useSelector((state) => state.user);
+  const {updated, isError, alertMsg} = userState;
+
   const updateNumber = async () => {
     await dispatch(userAction.updateProfile(token, {phone_number: phone}));
-    await dispatch(userAction.getProfile(token));
-    await props.navigation.navigate('ProfileDetail');
   };
+  useEffect(() => {
+    if (isError) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+        dispatch(userAction.removeMessage());
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
+
+  useEffect(() => {
+    if (updated) {
+      setShow(true);
+      setErrorToast(alertMsg);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
+      dispatch(userAction.getProfile(token));
+      props.navigation.navigate('ProfileDetail');
+      dispatch(userAction.removeMessage());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updated]);
 
   return (
     <>
+      <LoadingModal />
+      <AlertToasts visible={show} message={errorToast} />
       <ScrollView contentContainerStyle={styles.container}>
         <KeyboardAvoidingView>
           <Text style={styles.nation}>Indonesia</Text>
