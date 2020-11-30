@@ -18,10 +18,11 @@ import {Thumbnail} from 'native-base';
 import LoadingModal from '../components/LoadingModal';
 import account from '../assets/account.jpg';
 
-import detailChat from '../API/detailChat.json';
 import EmojiSelector, {Categories} from 'react-native-emoji-selector';
 // import action
 import messageAction from '../redux/actions/messages';
+
+import socket from '../helpers/socket';
 
 const ChatDetail = ({route}) => {
   const [showRightNavIconOption, setShowRightNavIconOption] = useState(false);
@@ -63,21 +64,33 @@ const ChatDetail = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    socket.on(id.toString(), () => {
+      console.log('detail chat loaded');
+      dispatch(messageAction.getMessageById(token, chatId));
+    });
+    return () => {
+      socket.close();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const dataMessageState = useSelector((state) => state.messages);
   const {detailMessage, isMessageSent, isLoading} = dataMessageState;
   useEffect(() => {
     if (detailMessage.results) {
       setUsername(detailMessage.results.friendContact.username);
       setDate(detailMessage.results.friendContact.last_active);
+      setData(detailMessage.results.chatMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailMessage.results]);
 
-  useEffect(() => {
-    if (detailMessage.results) {
-      setData(detailMessage.results.chatMessage);
-    }
-  }, [detailMessage.results]);
+  // useEffect(() => {
+  //   if (detailMessage) {
+  //     setData(detailMessage.results.chatMessage);
+  //   }
+  // }, [detailMessage]);
 
   const refreshMessage = () => {
     dispatch(messageAction.getMessageById(token, chatId));
@@ -96,7 +109,6 @@ const ChatDetail = ({route}) => {
   const moreMessage = () => {
     if (detailMessage.pageInfo.nextLink) {
       const nextPage = detailMessage.pageInfo.currentPage + 1;
-      setRequestLoad(true);
       dispatch(messageAction.getMessageById(token, chatId, nextPage));
     }
   };
@@ -108,7 +120,6 @@ const ChatDetail = ({route}) => {
         } else {
           const newDataLoaded = data.concat(detailMessage.results.chatMessage);
           setData(newDataLoaded);
-          setRequestLoad(false);
           console.log(detailMessage.results);
         }
       }
@@ -124,7 +135,7 @@ const ChatDetail = ({route}) => {
       }, 100);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMessageSent, chatId]);
+  }, [isMessageSent]);
 
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity

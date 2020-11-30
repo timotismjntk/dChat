@@ -164,34 +164,6 @@ export default (state = initialState, action) => {
         resetCodeData: action.payload.data.result,
       };
     }
-    case 'persist/PURGE': {
-      return {
-        ...state,
-        isError: false,
-        isSignup: false,
-        isLogin: false,
-        failSignup: false,
-        isRegistered: false,
-        alertMsg: '',
-        alertMsgLoginNumber: '',
-        token: '',
-        isLoginWithNumber: false,
-      };
-    }
-    case 'persist/REHYDRATE': {
-      return {
-        ...state,
-        // isError: false,
-        // isSignup: false,
-        // isLogin: false,
-        // failSignup: false,
-        // isRegistered: false,
-        // alertMsg: '',
-        // alertMsgLoginNumber: '',
-        // token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjA2MjkyOTkxfQ.iuz0AHjQFXhmEh2kgNNl-wrOCQj5e2p8X4vt3arfcIc',
-        // isLoginWithNumber: true,
-      };
-    }
     case 'LOGOUT_USER': {
       //   localStorage.removeItem('token');
       return {

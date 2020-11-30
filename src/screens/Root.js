@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
-
+import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
 
 // import component share modal
@@ -66,6 +66,10 @@ const Root = (props) => {
   const [openModal, setOpenModal] = useState(false);
   const authState = useSelector((state) => state.auth);
   const {isLoginWithNumber, isLogin, isRegistered} = authState;
+
+  useEffect(()=> {
+    SplashScreen.hide();
+  }, []);
 
   return (
     <NavigationContainer>

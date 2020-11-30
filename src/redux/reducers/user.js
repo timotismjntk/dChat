@@ -146,17 +146,6 @@ const initialState = {
           alertMsgReset: '',
         };
       }
-      // case 'persist/PURGE': {
-      //   return {
-      //     data: {},
-      //     isLoading: false,
-      //     isError: false,
-      //     alertMsg: '',
-      //     updated: false,
-      //     isUploaded: false,
-      //     isDeleted: false,
-      //   };
-      // }
       default: {
         return state;
       }

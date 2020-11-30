@@ -14,10 +14,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/EvilIcons';
 import {Thumbnail, Badge} from 'native-base';
 import moment from 'moment';
+import jwt_decode from 'jwt-decode';
 // import components
 import OptionsModal from '../components/ModalShowOptions';
 import ModalShowOtherUserPreview from '../components/ModalShowOtherUserPreview';
-import {store, persistor} from '../redux/store';
+import socket from '../helpers/socket';
+
 import {API_URL} from '@env';
 
 import bear from '../assets/bear.png';
@@ -50,11 +52,18 @@ const Home = (props) => {
   };
 
   const token = useSelector((state) => state.auth.token);
-
+  const {id: userId} = jwt_decode(token);
   useEffect(() => {
     dispatch(messageAction.listMessage(token)).catch((e) => {
       console.log(e.message);
     });
+    socket.on(userId.toString(), () => {
+      console.log('loaded');
+      dispatch(messageAction.listMessage(token));
+    });
+    return () => {
+      socket.close();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const messageState = useSelector((state) => state.messages);
