@@ -76,6 +76,15 @@ const LoginWithEmail = (props) => {
   }, [isError]);
 
   useEffect(() => {
+    if (isLoading) {
+      setTimeout(() => {
+        dispatch(loginAction.clearMessageLoginByEmail());
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (isLogin) {
       setErrorToast(alertMsg);
       setShow(true);
@@ -85,6 +94,7 @@ const LoginWithEmail = (props) => {
       setTimeout(() => {
         props.navigation.navigate('Home');
       }, 2000);
+      dispatch(loginAction.clearMessageLoginByEmail());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

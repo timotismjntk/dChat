@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  StatusBar,
 } from 'react-native';
 import LoadingModal from '../components/LoadingModal';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -19,6 +20,7 @@ import jwt_decode from 'jwt-decode';
 import OptionsModal from '../components/ModalShowOptions';
 import ModalShowOtherUserPreview from '../components/ModalShowOtherUserPreview';
 import socket from '../helpers/socket';
+import PushNotification from 'react-native-push-notification';
 
 import {API_URL} from '@env';
 
@@ -27,8 +29,52 @@ import account from '../assets/account.jpg';
 
 // import action
 import messageAction from '../redux/actions/messages';
+import userAction from '../redux/actions/user';
+
+
+PushNotification.createChannel(
+  {
+    channelId: 'dChat',
+    channelName: 'dChat Notification Channel',
+    channelDescription: 'dChatNotification',
+    soundName: 'default',
+    importance: 4,
+    vibrate: true,
+  },
+  (created) => console.log(`createdChannel returned '${created}'`),
+);
+
+PushNotification.configure({
+  onRegister: (token) => {
+    console.log('TOKEN:', token);
+  },
+
+  onNotification: (notification) => {
+    console.log('NOTIFICATION:', notification);
+    PushNotification.localNotification({
+      channelId: 'dChat',
+      title: notification.title,
+      message: notification.message,
+    });
+  },
+
+  onRegisterError: (err) => {
+    console.error(err.message, err);
+  },
+});
+
+// PushNotification.subscribeToTopic('messageTopic');
+
 
 const Home = (props) => {
+  useEffect(() => {
+    PushNotification.localNotification({
+      channelId: 'dChat',
+      title: 'Hola',
+      message: 'Welcome to dChat',
+    });
+  }, []);
+
   const [openModal, setOpenModal] = useState(false);
   const [openModalPreviewUser, setOpenModalPreviewUser] = useState(false);
   const [sendImageToComponents, setSendImageToComponents] = useState(''); // this for send image to component when user click image from chat
@@ -135,11 +181,15 @@ const Home = (props) => {
           <Thumbnail
             source={
               item.isSendByUser === 'true'
-                ? item.To.profile_image
-                  ? {uri: API_URL + item.To.profile_image}
+                ? item.To
+                  ? item.To.profile_image
+                    ? {uri: API_URL + item.To.profile_image}
+                    : account
                   : account
-                : item.From.profile_image
-                ? {uri: API_URL + item.From.profile_image}
+                : item.From
+                ? item.From.profile_image
+                  ? {uri: API_URL + item.From.profile_image}
+                  : account
                 : account
             }
           />
@@ -177,6 +227,7 @@ const Home = (props) => {
 
   return (
     <>
+      <StatusBar backgroundColor="black" />
       <LoadingModal requestLoading={loading} duration={1500} />
       <View style={styles.topNav}>
         <Text style={styles.brand}>d•Chat</Text>

@@ -19,8 +19,8 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import LoadingModal from '../components/LoadingModal';
 import AlertToasts from '../components/AlertToasts';
-
 import userAction from '../redux/actions/user';
+import authAction from '../redux/actions/auth';
 import {API_URL} from '@env';
 
 const SettingAccount = (props) => {
@@ -64,9 +64,7 @@ const SettingAccount = (props) => {
   const [signoutLoading, setSignoutLoading] = useState(false);
 
   const signOut = async () => {
-    setTimeout(() => {
-      setSignoutLoading(true);
-    }, 1000);
+    setSignoutLoading(true);
     try {
       setSignoutLoading(false);
       setErrorToast('Signout now');
@@ -76,11 +74,10 @@ const SettingAccount = (props) => {
         await persistor.purge();
         await persistor.purge();
         await persistor.flush();
-        props.navigation.navigate('Welcome');
-      }, 2000);
+        dispatch(authAction.logout());
+      }, 1000);
     } catch (e) {}
   };
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

@@ -55,6 +55,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isErrorNumber: true,
+        isLoadingNumber: false,
         alertMsgLoginNumber: action.payload.response.data.error,
       };
     }
@@ -165,13 +166,22 @@ export default (state = initialState, action) => {
       };
     }
     case 'LOGOUT_USER': {
-      //   localStorage.removeItem('token');
       return {
-        isError: false,
-        isSignup: false,
+        ...state,
         isLogin: false,
+        isLoginWithNumber: false,
+        isErrorNumber: false,
+        isLoadingNumber: false,
+        isSignup: false,
         failSignup: false,
+        isError: false,
         isRegistered: false,
+        isLoading: false,
+        token: '',
+        alertMsgLoginNumber: '',
+        resetCodeData: {},
+        isVerify: false,
+        isErrorVerify: false,
         alertMsg: 'Logout Successfully',
       };
     }

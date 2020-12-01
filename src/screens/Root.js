@@ -4,8 +4,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import SplashScreen from 'react-native-splash-screen'
+import SplashScreen from 'react-native-splash-screen';
 const Stack = createStackNavigator();
+const Register = createStackNavigator();
 
 // import component share modal
 import ShareModal from '../components/ShareModal';
@@ -75,66 +76,66 @@ const Root = (props) => {
     <NavigationContainer>
       {!isLoginWithNumber && !isLogin ? (
         <Stack.Navigator>
-          <Stack.Screen
+          <Register.Screen
             options={{headerShown: false}}
             name="Welcome"
             component={Welcome}
           />
           {/* ---- */}
-          <Stack.Screen
+          <Register.Screen
             name="LoginWithEmail"
             component={LoginWithEmail}
             options={{headerShown: false}}
           />
           {/* ---- */}
-          <Stack.Screen
+          <Register.Screen
             name="StepOne"
             component={StepOne}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="StepTwo"
             component={StepTwo}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="StepThree"
             component={StepThree}
             options={{headerShown: false}}
           />
           {/* --- */}
-          <Stack.Screen
+          <Register.Screen
             name="ImportAccount"
             component={ImportAccount}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="EnterOldPhone"
             component={EnterOldPhone}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="EnterOldEmail"
             component={EnterOldEmail}
             options={{headerShown: false}}
           />
           {/* --- */}
-          <Stack.Screen
+          <Register.Screen
             name="CreateNewAccount"
             component={CreateNewAccount}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="EnterNewPassword"
             component={EnterNewPassword}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="ForgotPassword"
             component={ForgotPassword}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="ResetPassword"
             component={ResetPassword}
             options={{
@@ -153,12 +154,12 @@ const Root = (props) => {
               },
             }}
           />
-          <Stack.Screen
+          <Register.Screen
             name="VerifyResetCode"
             component={VerifyResetCode}
             options={{headerShown: false}}
           />
-          <Stack.Screen
+          <Register.Screen
             name="AutoAddFriend"
             component={AutoAddFriend}
             options={{headerShown: false}}
