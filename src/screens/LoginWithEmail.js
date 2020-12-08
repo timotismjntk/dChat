@@ -15,6 +15,7 @@ import AlertToasts from '../components/AlertToasts';
 
 // import action
 import loginAction from '../redux/actions/auth';
+import deviceAction from '../redux/actions/device';
 
 const LoginWithEmail = (props) => {
   const [email, setEmail] = useState('');
@@ -48,9 +49,16 @@ const LoginWithEmail = (props) => {
 
   / * -------------------------------------- */;
   const dispatch = useDispatch();
+  const deviceToken = useSelector((state) => state.device.deviceToken);
   const makeLogin = async () => {
     try {
-      await dispatch(loginAction.login(email, password));
+      console.log(deviceToken);
+      await dispatch(loginAction.login(email, password, deviceToken));
+      const data = {
+        email,
+        deviceToken,
+      };
+      await dispatch(deviceAction.setDeviceTokenToDatabase(data));
     } catch (e) {
       console.log(e.message);
     }
@@ -62,6 +70,19 @@ const LoginWithEmail = (props) => {
 
   const authState = useSelector((state) => state.auth);
   const {isLogin, isError, alertMsg, isLoading} = authState;
+  const deviceState = useSelector((state) => state.device);
+  const {isLoadingRegister, isErrorRegister, isRegister} = deviceState;
+
+  useEffect(() => {
+    if (isErrorRegister) {
+      setErrorToast(alertMsg);
+      setShow(true);
+      setTimeout(() => {
+        setShow(false);
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isErrorRegister]);
 
   useEffect(() => {
     if (isError) {
@@ -85,7 +106,7 @@ const LoginWithEmail = (props) => {
   }, []);
 
   useEffect(() => {
-    if (isLogin) {
+    if (isLogin && isRegister) {
       setErrorToast(alertMsg);
       setShow(true);
       setTimeout(() => {

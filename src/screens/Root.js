@@ -5,6 +5,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import SplashScreen from 'react-native-splash-screen';
+import PushNotification from 'react-native-push-notification';
+
+import deviceAction from '../redux/actions/device';
+
 const Stack = createStackNavigator();
 const Register = createStackNavigator();
 
@@ -63,12 +67,58 @@ import CreateGroup from '../screens/CreateGroup';
 //
 import PreviewProfileImage from '../screens/PreviewProfileImage';
 
+
+PushNotification.createChannel(
+  {
+    channelId: 'dChat',
+    channelName: 'dChat Notification Channel',
+    channelDescription: 'dChatNotification',
+    soundName: 'default',
+    importance: 4,
+    vibrate: true,
+  },
+  (created) => console.log(`createdChannel returned '${created}'`),
+);
+
 const Root = (props) => {
   const [openModal, setOpenModal] = useState(false);
   const authState = useSelector((state) => state.auth);
   const {isLoginWithNumber, isLogin, isRegistered} = authState;
 
-  useEffect(()=> {
+  const [tokenDevice, setTokenDevice] = useState('');
+  const dispatch = useDispatch();
+  useEffect(() => {
+    PushNotification.configure({
+      onRegister: (token) => {
+        setTokenDevice(token.token);
+        // console.log(tokenRegistration);
+      },
+
+      onNotification: (notification) => {
+        console.log('NOTIFICATION:', notification);
+        PushNotification.localNotification({
+          channelId: 'dChat',
+          title: notification.title,
+          message: notification.message,
+          largeIconUrl: notification.largeIconUrl,
+        });
+      },
+
+      onRegisterError: (err) => {
+        console.error(err.message, err);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (tokenDevice) {
+      console.log(tokenDevice);
+      dispatch(deviceAction.setDeviceTokenToStateRedux(tokenDevice));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenDevice]);
+
+  useEffect(() => {
     SplashScreen.hide();
   }, []);
 

@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
-import {store, persistor} from '../redux/store';
+import {persistor} from '../redux/store';
 import account from '../assets/account.jpg';
 import listFriendIcon from '../assets/listFriendIcon.png';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,6 +20,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import LoadingModal from '../components/LoadingModal';
 import AlertToasts from '../components/AlertToasts';
 import userAction from '../redux/actions/user';
+import deviceAction from '../redux/actions/device';
 import authAction from '../redux/actions/auth';
 import {API_URL} from '@env';
 
@@ -74,7 +75,9 @@ const SettingAccount = (props) => {
         await persistor.purge();
         await persistor.purge();
         await persistor.flush();
-        dispatch(authAction.logout());
+        await dispatch(deviceAction.removeDeviceToken(token));
+        // await dispatch(deviceAction.setDeviceTokenToStateRedux(''));
+        await dispatch(authAction.logout());
       }, 1000);
     } catch (e) {}
   };
@@ -89,7 +92,11 @@ const SettingAccount = (props) => {
           <Thumbnail
             large
             source={
-              userData ? {uri: API_URL + userData.profile_image} : account
+              userData
+                ? userData.profile_image
+                  ? {uri: API_URL + userData.profile_image}
+                  : account
+                : account
             }
           />
           <View style={styles.upperContainer}>

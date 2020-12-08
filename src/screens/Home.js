@@ -27,10 +27,13 @@ import {API_URL} from '@env';
 import bear from '../assets/bear.png';
 import account from '../assets/account.jpg';
 
+import {persistor} from '../redux/store';
+
 // import action
 import messageAction from '../redux/actions/messages';
 import userAction from '../redux/actions/user';
-
+import authAction from '../redux/actions/auth';
+import deviceAction from '../redux/actions/device';
 
 PushNotification.createChannel(
   {
@@ -44,29 +47,36 @@ PushNotification.createChannel(
   (created) => console.log(`createdChannel returned '${created}'`),
 );
 
-PushNotification.configure({
-  onRegister: (token) => {
-    console.log('TOKEN:', token);
-  },
-
-  onNotification: (notification) => {
-    console.log('NOTIFICATION:', notification);
-    PushNotification.localNotification({
-      channelId: 'dChat',
-      title: notification.title,
-      message: notification.message,
-    });
-  },
-
-  onRegisterError: (err) => {
-    console.error(err.message, err);
-  },
-});
-
 // PushNotification.subscribeToTopic('messageTopic');
 
-
 const Home = (props) => {
+  const token = useSelector((state) => state.auth.token);
+  const authState = useSelector((state) => state.auth);
+  const {isExpired, isLoadingExpired} = authState;
+
+  useEffect(() => {
+    if (token) {
+      dispatch(authAction.checkTokenExpired(token)).catch((e) => {
+        console.log(e.message);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isExpired) {
+      // persistor.purge();
+      // persistor.purge();
+      // persistor.flush();
+      // dispatch(deviceAction.removeDeviceToken(token)).catch((e) => {
+      //   console.log(e.message);
+      // });
+      // dispatch(deviceAction.setDeviceTokenToStateRedux(''));
+      // dispatch(authAction.logout());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpired]);
+
   useEffect(() => {
     PushNotification.localNotification({
       channelId: 'dChat',
@@ -97,12 +107,16 @@ const Home = (props) => {
     props.navigation.navigate('Friend');
   };
 
-  const token = useSelector((state) => state.auth.token);
   const {id: userId} = jwt_decode(token);
+
   useEffect(() => {
     dispatch(messageAction.listMessage(token)).catch((e) => {
       console.log(e.message);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     socket.on(userId.toString(), () => {
       console.log('loaded');
       dispatch(messageAction.listMessage(token));
@@ -112,6 +126,7 @@ const Home = (props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const messageState = useSelector((state) => state.messages);
   const {data, isLoading} = messageState;
   useEffect(() => {
@@ -145,10 +160,12 @@ const Home = (props) => {
   };
   useEffect(() => {
     if (requestLoad) {
-      if (dataMessage !== data.results) {
-        const newDataLoaded = data.concat(data.results);
-        setDataMessage(newDataLoaded);
-        setRequestLoad(false);
+      if (data.pageInfo) {
+        if (data.pageInfo.currentPage > 1) {
+          const newDataLoaded = dataMessage.concat(data.results);
+          setDataMessage(newDataLoaded);
+          setRequestLoad(false);
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -19,25 +19,43 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // import action
 import loginAction from '../redux/actions/auth';
+import deviceAction from '../redux/actions/device';
 
-const EnterOldPhone = () => {
+const EnterOldPhone = (props) => {
   const [phone_number, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, SetError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [show, setShow] = useState(false);
+  const [errorToast, setErrorToast] = useState('');
 
   const loginState = useSelector((state) => state.auth);
-  const {isLoading, alertMsgLoginNumber, isErrorNumber} = loginState;
+  const {
+    isLoading,
+    isLoginWithNumber,
+    alertMsgLoginNumber,
+    isErrorNumber,
+  } = loginState;
 
   const dispatch = useDispatch();
+  const deviceToken = useSelector((state) => state.device.deviceToken);
+  const deviceState = useSelector((state) => state.device);
+  const {isRegister} = deviceState;
+
   const makeLogin = async () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 1500);
     try {
+      const data = {
+        phone_number,
+        deviceToken,
+      };
+      dispatch(deviceAction.setDeviceTokenToDatabase(data)).catch((e) => {
+        console.log(e.message);
+      });
       await dispatch(loginAction.loginNumber(phone_number, password));
     } catch (err) {}
   };
@@ -50,6 +68,16 @@ const EnterOldPhone = () => {
       }, 1500);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    if (isLoginWithNumber && isRegister) {
+      setTimeout(() => {
+        props.navigation.navigate('Home');
+      }, 2000);
+      dispatch(loginAction.clearMessageLoginByEmail());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoginWithNumber]);
 
   useEffect(() => {
     if (isErrorNumber) {

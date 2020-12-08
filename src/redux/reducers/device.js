@@ -3,6 +3,9 @@ const initialState = {
   isErrorRegister: false,
   isRegister: false,
   deviceToken: '',
+  isLoadingDelete: false,
+  isErrorDelete: false,
+  isDeleted: false,
 };
 
 export default (state = initialState, action) => {
@@ -10,7 +13,7 @@ export default (state = initialState, action) => {
     case 'REGISTER_DEVICES_PENDING': {
       return {
         ...state,
-        isLoading: true,
+        isLoadingRegister: true,
         isErrorRegister: false,
         isRegister: false,
       };
@@ -29,8 +32,42 @@ export default (state = initialState, action) => {
         isLoadingRegister: false,
         isErrorRegister: false,
         isRegister: true,
+        // deviceToken: action.data,
+      };
+    }
+    case 'REMOVE_DEVICE_TOKEN_PENDING': {
+      return {
+        ...state,
+        isLoadingDelete: true,
+        isErrorDelete: false,
+        isDeleted: false,
+      };
+    }
+    case 'REMOVE_DEVICE_TOKEN_REJECTED': {
+      return {
+        ...state,
+        isLoadingDelete: false,
+        isErrorDelete: true,
+        isDeleted: false,
+      };
+    }
+    case 'REMOVE_DEVICE_TOKEN_FULFILLED': {
+      return {
+        ...state,
+        isLoadingDelete: false,
+        isErrorDelete: false,
+        isDeleted: true,
+        // deviceToken: action.data,
+      };
+    }
+    case 'SET_DEVICE_TOKEN': {
+      return {
+        ...state,
         deviceToken: action.payload,
       };
+    }
+    default: {
+      return state;
     }
   }
 };

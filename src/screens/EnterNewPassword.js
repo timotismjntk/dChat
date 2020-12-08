@@ -25,7 +25,7 @@ const EnterNewPassword = (props) => {
   const [isMatch, setIsMatch] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [show, setShow] = useState(false);
-
+  const [isSet, setIsSet] = useState(false);
   const dispatch = useDispatch();
   console.log(props);
 
@@ -47,7 +47,11 @@ const EnterNewPassword = (props) => {
   const {phone_number, data} = props.route.params;
 
   const createAccount = async () => {
-    data.append('password', password);
+    if (!isSet) {
+      data.append('password', password);
+      setIsSet(true);
+    }
+    console.log(data);
     try {
       await dispatch(authAction.signUp(data));
     } catch (e) {
@@ -72,7 +76,8 @@ const EnterNewPassword = (props) => {
       setAlertMessage(alertMsg);
       setTimeout(() => {
         setShow(false);
-      }, 500);
+        dispatch(authAction.clearMessageAuth());
+      }, 2500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [failSignup]);
@@ -182,7 +187,7 @@ const EnterNewPassword = (props) => {
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <AlertToasts visible={alertMessage} message={show} />
+      <AlertToasts visible={show} message={alertMessage} />
     </>
   );
 };

@@ -12,9 +12,9 @@ export default {
     type: 'SIGNUP_USER',
     payload: http().post('auth/signup/phone/', qs.stringify(data)),
   }),
-  login: (email, password) => ({
+  login: (email, password, deviceToken) => ({
     type: 'AUTH_USER',
-    payload: http().post('auth/login/', qs.stringify({email, password})),
+    payload: http().post('auth/login/', qs.stringify({email, password, deviceToken})),
   }),
   loginNumber: (phone, password) => ({
     type: 'AUTH_USER_NUMBER',
@@ -31,6 +31,10 @@ export default {
   verifyResetCode: (email, reset_code) => ({
     type: 'VERIFY_RESET_CODE',
     payload: http().post('auth/verify/reset', qs.stringify({email, reset_code})),
+  }),
+  checkTokenExpired: (token) => ({
+    type: 'CHECK_REFRESH_TOKEN',
+    payload: http(token).post('auth/verify/token'),
   }),
   logout: () => ({
     type: 'LOGOUT_USER',

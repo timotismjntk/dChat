@@ -17,6 +17,7 @@ import moment from 'moment';
 import {Thumbnail} from 'native-base';
 import LoadingModal from '../components/LoadingModal';
 import account from '../assets/account.jpg';
+import {API_URL} from '@env';
 
 import EmojiSelector, {Categories} from 'react-native-emoji-selector';
 // import action
@@ -60,14 +61,18 @@ const ChatDetail = ({route}) => {
   const [date, setDate] = useState('');
 
   useEffect(() => {
-    dispatch(messageAction.getMessageById(token, chatId));
+    dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
+      console.log(e.message);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     socket.on(id.toString(), () => {
-      console.log('detail chat loaded');
-      dispatch(messageAction.getMessageById(token, chatId));
+      console.log('loaded');
+      dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
+        console.log(e.message);
+      });
     });
     return () => {
       socket.close();
@@ -78,22 +83,18 @@ const ChatDetail = ({route}) => {
   const dataMessageState = useSelector((state) => state.messages);
   const {detailMessage, isMessageSent, isLoading} = dataMessageState;
   useEffect(() => {
-    if (detailMessage.results) {
+    if (detailMessage.results && !isLoading) {
       setUsername(detailMessage.results.friendContact.username);
       setDate(detailMessage.results.friendContact.last_active);
       setData(detailMessage.results.chatMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detailMessage.results]);
-
-  // useEffect(() => {
-  //   if (detailMessage) {
-  //     setData(detailMessage.results.chatMessage);
-  //   }
-  // }, [detailMessage]);
+  }, [detailMessage.results, isLoading]);
 
   const refreshMessage = () => {
-    dispatch(messageAction.getMessageById(token, chatId));
+    dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
+      console.log(e.message);
+    });
   };
 
   const sendMessage = (recipient) => {
@@ -102,40 +103,43 @@ const ChatDetail = ({route}) => {
       content: msgInput,
     };
     Keyboard.dismiss();
-    dispatch(messageAction.sendMessage(token, dataMessage));
+    dispatch(messageAction.sendMessage(token, dataMessage)).catch((e) => {
+      console.log(e.message);
+    });
   };
-
-  const [requestLoad, setRequestLoad] = useState(false);
-  const moreMessage = () => {
-    if (detailMessage.pageInfo.nextLink) {
-      const nextPage = detailMessage.pageInfo.currentPage + 1;
-      dispatch(messageAction.getMessageById(token, chatId, nextPage));
-    }
-  };
-  useEffect(() => {
-    if (!isLoading) {
-      if (detailMessage.results) {
-        if (detailMessage.pageInfo.currentPage === 1) {
-          setData(detailMessage.results.chatMessage);
-        } else {
-          const newDataLoaded = data.concat(detailMessage.results.chatMessage);
-          setData(newDataLoaded);
-          console.log(detailMessage.results);
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detailMessage.results]);
 
   useEffect(() => {
     if (isMessageSent) {
-      dispatch(messageAction.getMessageById(token, chatId));
-      setTimeout(() => {
-        dispatch(messageAction.clearMessages());
-      }, 100);
+      dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
+        console.log(e.message);
+      });
+      dispatch(messageAction.clearMessages());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMessageSent]);
+
+  const moreMessage = () => {
+    if (detailMessage.pageInfo.nextLink) {
+      const nextPage = detailMessage.pageInfo.currentPage + 1;
+      dispatch(messageAction.getMessageById(token, chatId, nextPage)).catch(
+        (e) => {
+          console.log(e.message);
+        },
+      );
+    }
+  };
+  useEffect(() => {
+    if (detailMessage.pageInfo) {
+      if (detailMessage.pageInfo.currentPage > 1) {
+        const newDataLoaded = data.concat(detailMessage.results.chatMessage);
+        setData(newDataLoaded);
+        console.log(data);
+      } else {
+        setData(detailMessage.results.chatMessage);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailMessage.pageInfo]);
 
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity
@@ -163,7 +167,11 @@ const ChatDetail = ({route}) => {
               small
               source={
                 detailMessage.results.friendContact.profile_image
-                  ? {uri: detailMessage.results.friendContact.profile_image}
+                  ? {
+                      uri:
+                        API_URL +
+                        detailMessage.results.friendContact.profile_image,
+                    }
                   : account
               }
             />

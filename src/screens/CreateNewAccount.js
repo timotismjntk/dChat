@@ -28,12 +28,15 @@ const CreateNewAccount = (props) => {
 
   const dispatch = useDispatch();
 
-  const navigateTo = () =>
+  const navigateTo = () => {
+    data.append('username', username);
+    data.append('phone_number', props.route.params.phone_number);
     props.navigation.navigate('EnterNewPassword', {
       data,
       phone_number: props.route.params.phone_number,
       username,
     });
+  };
 
   const options = {
     title: 'Select Avatar',
@@ -146,7 +149,7 @@ const CreateNewAccount = (props) => {
           <Icon name="arrow-right" size={20} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <AlertToasts visible={alertMessage} message={show} />
+      <AlertToasts visible={show} message={alertMessage} />
     </>
   );
 };

@@ -15,6 +15,8 @@ const initialState = {
   resetCodeData: {},
   isVerify: false,
   isErrorVerify: false,
+  isExpired: false,
+  isLoadingExpired: false,
 };
 
 export default (state = initialState, action) => {
@@ -38,7 +40,7 @@ export default (state = initialState, action) => {
         // localStorage.setItem('token', action.payload.data.message);
       return {
         ...state,
-        token: action.payload.data.message.token,
+        token: action.payload.data.token,
         isLoading: false,
         isLogin: true,
         isError: false,
@@ -165,6 +167,31 @@ export default (state = initialState, action) => {
         resetCodeData: action.payload.data.result,
       };
     }
+    case 'CHECK_REFRESH_TOKEN_PENDING': {
+      return {
+        ...state,
+        isExpired: false,
+        isLoadingExpired: true,
+      };
+    }
+    case 'CHECK_REFRESH_TOKEN_REJECTED': {
+      return {
+        ...state,
+        isExpired: true,
+        isLoadingExpired: false,
+        isLogin: false,
+        isLoginWithNumber: false,
+        alertMsg: action.payload.response.data.error,
+      };
+    }
+    case 'CHECK_REFRESH_TOKEN_FULFILLED': {
+      return {
+        ...state,
+        isExpired: false,
+        isLoadingExpired: false,
+        alertMsg: action.payload.data.message,
+      };
+    }
     case 'LOGOUT_USER': {
       return {
         ...state,
@@ -183,6 +210,8 @@ export default (state = initialState, action) => {
         isVerify: false,
         isErrorVerify: false,
         alertMsg: 'Logout Successfully',
+        isExpired: false,
+        isLoadingExpired: false,
       };
     }
     case 'CLEAR_MESSAGE_AUTH': {
