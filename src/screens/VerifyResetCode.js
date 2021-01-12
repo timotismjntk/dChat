@@ -51,6 +51,7 @@ const VerifyResetCode = (props) => {
     if (isVerify) {
       setShow(false);
       setAlert('');
+      dispatch(authAction.removeMessage());
       props.navigation.navigate('ResetPassword', {email: email});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,7 +62,7 @@ const VerifyResetCode = (props) => {
       setShowVerifyError(true);
       setTimeout(() => {
         setShowVerifyError(false);
-        dispatch(authAction.clearMessageAuth());
+        dispatch(authAction.clearMessage());
       }, 1200);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

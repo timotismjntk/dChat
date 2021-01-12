@@ -39,7 +39,9 @@ const AddFriend = (props) => {
 
   const searchContact = async () => {
     try {
-      await dispatch(contactAction.listPublicContact(token, search));
+      await dispatch(contactAction.listPublicContact(token, search)).catch((e) => {
+        console.log(e.message);
+      });
     } catch (err) {
       // Alert.alert(err.response.data.message);
     }
@@ -109,6 +111,7 @@ const AddFriend = (props) => {
         <TextInput
           placeholder="Masukkan ID teman"
           style={styles.searchInput}
+          onSubmitEditing={searchContact}
           onChangeText={(text) => setSearch(text)}
           value={search}
         />

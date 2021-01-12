@@ -11,6 +11,7 @@ const initialState = {
   isLoading: false,
   token: '',
   alertMsg: '',
+  isMatch: false,
   alertMsgLoginNumber: '',
   resetCodeData: {},
   isVerify: false,
@@ -66,7 +67,7 @@ export default (state = initialState, action) => {
         // localStorage.setItem('token', action.payload.data.message);
       return {
         ...state,
-        token: action.payload.data.message.token,
+        token: action.payload.data.token,
         isLoadingNumber: false,
         isLoginWithNumber: true,
         isErrorNumber: false,

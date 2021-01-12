@@ -56,7 +56,7 @@ const ChatDetail = ({route}) => {
   const {id} = jwt_decode(token);
   const [msgInput, setMsgInput] = useState('');
 
-  const [data, setData] = useState([]);
+  let [data, setData] = useState([]);
   const [username, setUsername] = useState('');
   const [date, setDate] = useState('');
 
@@ -81,15 +81,20 @@ const ChatDetail = ({route}) => {
   }, []);
 
   const dataMessageState = useSelector((state) => state.messages);
-  const {detailMessage, isMessageSent, isLoading} = dataMessageState;
+  const {
+    detailMessage,
+    isMessageSent,
+    isLoading,
+    isLoadingMsgById,
+  } = dataMessageState;
   useEffect(() => {
-    if (detailMessage.results && !isLoading) {
+    if (detailMessage.results) {
       setUsername(detailMessage.results.friendContact.username);
       setDate(detailMessage.results.friendContact.last_active);
       setData(detailMessage.results.chatMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detailMessage.results, isLoading]);
+  }, [detailMessage.results]);
 
   const refreshMessage = () => {
     dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
@@ -113,7 +118,12 @@ const ChatDetail = ({route}) => {
       dispatch(messageAction.getMessageById(token, chatId)).catch((e) => {
         console.log(e.message);
       });
-      dispatch(messageAction.clearMessages());
+      dispatch(messageAction.listMessage(token)).catch((e) => {
+        console.log(e.message);
+      });
+      setTimeout(() => {
+        dispatch(messageAction.clearMessages());
+      }, 350);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMessageSent]);
@@ -131,11 +141,9 @@ const ChatDetail = ({route}) => {
   useEffect(() => {
     if (detailMessage.pageInfo) {
       if (detailMessage.pageInfo.currentPage > 1) {
-        const newDataLoaded = data.concat(detailMessage.results.chatMessage);
-        setData(newDataLoaded);
-        console.log(data);
-      } else {
-        setData(detailMessage.results.chatMessage);
+        const newDataLoaded = detailMessage.results.chatMessage;
+        const newdata = data.concat(...newDataLoaded);
+        setData(newdata);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -228,7 +236,7 @@ const ChatDetail = ({route}) => {
           inverted
           data={data}
           renderItem={Item}
-          refreshing={isLoading}
+          refreshing={isLoadingMsgById}
           onRefresh={refreshMessage}
           keyExtractor={(item) => item.id.toString()}
           //   contentContainerStyle={{paddingTop: 10}}

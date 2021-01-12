@@ -56,7 +56,9 @@ const EnterOldPhone = (props) => {
       dispatch(deviceAction.setDeviceTokenToDatabase(data)).catch((e) => {
         console.log(e.message);
       });
-      await dispatch(loginAction.loginNumber(phone_number, password));
+      await dispatch(
+        loginAction.loginNumber(phone_number, password, deviceToken),
+      );
     } catch (err) {}
   };
 
@@ -83,6 +85,10 @@ const EnterOldPhone = (props) => {
     if (isErrorNumber) {
       setAlertMessage(alertMsgLoginNumber);
       setShow(true);
+      setTimeout(() => {
+        setShow(false);
+        dispatch(loginAction.clearMessageAuth());
+      }, 1500);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isErrorNumber]);
@@ -165,7 +171,7 @@ const EnterOldPhone = (props) => {
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <LoadingModal requestLoading={loading} />
-      <AlertToasts visible={show} message={alertMessage} />
+      <AlertToasts visible={show} message={'wrong phone or password'} />
     </>
   );
 };

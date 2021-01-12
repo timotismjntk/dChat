@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
 import http from '../../helpers/http';
 import qs from 'query-string';
-
 
 export default {
   signUp: (data) => ({
@@ -14,11 +12,21 @@ export default {
   }),
   login: (email, password, deviceToken) => ({
     type: 'AUTH_USER',
-    payload: http().post('auth/login/', qs.stringify({email, password, deviceToken})),
+    payload: http().post(
+      'auth/login/',
+      qs.stringify({email, password, deviceToken}),
+    ),
   }),
-  loginNumber: (phone, password) => ({
+  loginNumber: (phone, password, deviceToken) => ({
     type: 'AUTH_USER_NUMBER',
-    payload: http().post('auth/login/phone', qs.stringify({phone_number: phone, password: password})),
+    payload: http().post(
+      'auth/login/phone',
+      qs.stringify({
+        phone_number: phone,
+        password: password,
+        deviceToken: deviceToken,
+      }),
+    ),
   }),
   checkNumber: (phone) => ({
     type: 'CHECK_NUMBER',
@@ -30,7 +38,10 @@ export default {
   }),
   verifyResetCode: (email, reset_code) => ({
     type: 'VERIFY_RESET_CODE',
-    payload: http().post('auth/verify/reset', qs.stringify({email, reset_code})),
+    payload: http().post(
+      'auth/verify/reset',
+      qs.stringify({email, reset_code}),
+    ),
   }),
   checkTokenExpired: (token) => ({
     type: 'CHECK_REFRESH_TOKEN',

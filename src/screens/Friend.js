@@ -36,8 +36,14 @@ const Friend = (props) => {
 
   const {id: userId} = jwt_decode(token);
 
-  const searchFriend = () => {
-    dispatch(contactAction.listFriend(token, search));
+  const searchFriend = async () => {
+    try {
+      await dispatch(contactAction.listFriend(token, search)).catch((e) => {
+        console.log(e.message);
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   useEffect(() => {
@@ -105,6 +111,7 @@ const Friend = (props) => {
         </TouchableOpacity>
         <TextInput
           placeholder="Cari dengan Nama"
+          onSubmitEditing={searchFriend}
           style={styles.searchInput}
           onChangeText={(text) => setSearch(text)}
           value={search}

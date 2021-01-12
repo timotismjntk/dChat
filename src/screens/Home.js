@@ -64,20 +64,6 @@ const Home = (props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (isExpired) {
-      // persistor.purge();
-      // persistor.purge();
-      // persistor.flush();
-      // dispatch(deviceAction.removeDeviceToken(token)).catch((e) => {
-      //   console.log(e.message);
-      // });
-      // dispatch(deviceAction.setDeviceTokenToStateRedux(''));
-      // dispatch(authAction.logout());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExpired]);
-
-  useEffect(() => {
     PushNotification.localNotification({
       channelId: 'dChat',
       title: 'Hola',

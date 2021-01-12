@@ -23,6 +23,8 @@ import contactAction from '../redux/actions/contact';
 const StartNewChat = (props) => {
   const [isSelected, setSelected] = useState(false);
   const [id, setId] = useState(null);
+  const [search, setSearch] = useState('');
+
   const navigateTo = () =>
     props.navigation.navigate('ChatDetail', {
       id: Number(id),
@@ -79,6 +81,16 @@ const StartNewChat = (props) => {
     </TouchableOpacity>
   );
 
+  const searchFriend = async () => {
+    try {
+      await dispatch(contactAction.listFriend(token, search)).catch((e) => {
+        console.log(e.message);
+      });
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   useEffect(() => {
     dispatch(contactAction.listFriend(token));
   }, [dispatch, token]);
@@ -98,11 +110,26 @@ const StartNewChat = (props) => {
       <LoadingModal />
       <View style={styles.parent}>
         <View style={styles.searchBar}>
-          <Icon name="search" size={12} color="grey" />
+          <TouchableOpacity onPress={searchFriend}>
+            <Icon name="search" size={12} color="grey" />
+          </TouchableOpacity>
           <TextInput
             placeholder="Cari dengan Nama"
+            onSubmitEditing={searchFriend}
+            onChangeText={(text) => setSearch(text)}
             style={styles.searchInput}
+            value={search}
           />
+          {search.length > 0 && (
+            <TouchableOpacity
+              style={styles.btnClear}
+              onPress={() => {
+                setSearch('');
+                dispatch(contactAction.listFriend(token));
+              }}>
+              <Icon name="times" size={20} color="#a5acaf" />
+            </TouchableOpacity>
+          )}
         </View>
         <View style={{flex: 1}}>
           <FlatList
@@ -156,7 +183,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   searchInput: {
-    // flex: 1,
+    flex: 1,
     height: 40,
     fontStyle: 'italic',
     paddingLeft: 8,
@@ -179,6 +206,11 @@ const styles = StyleSheet.create({
   status_message: {
     fontSize: 9,
     color: 'grey',
+  },
+  btnClear: {
+    position: 'absolute',
+    top: 12,
+    right: 0,
   },
   btnCreateConversation: {
     backgroundColor: '#bfbfbf',
